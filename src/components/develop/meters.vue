@@ -1,4 +1,5 @@
 <script>
+import Store from '../../services/store'
 import request from 'superagent'
 
 const vue = {
@@ -22,10 +23,13 @@ const vue = {
   },
   route: {
     data () {
-      const meters = this.fetch('meters')
-      const models = this.fetch('meter-models')
-      const classes = this.fetch('meter-classes')
-      return { meters, models, classes }
+      const done = Store.findOne('meter-models', 2)
+      console.log('done', done)
+      return true
+      // const meters = this.fetch('meters')
+      // const models = this.fetch('meter-models')
+      // const classes = this.fetch('meter-classes')
+      // return { meters, models, classes }
     }
   },
   methods: {
