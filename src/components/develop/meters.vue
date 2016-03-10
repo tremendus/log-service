@@ -40,11 +40,15 @@ const vue = {
           this.$set(key, data)
         })
     },
-    save () {
+    create () {
       store.create('meters', this.meter)
         .then(() => {
           this.reset('meters', 'meters')
+          this.meter.label = ''
         })
+    },
+    update () {
+      
     },
     destroy (meter) {
       store.destroy('meters', meter.id)
@@ -119,5 +123,5 @@ export default vue
                 label label
                 input.form-control(type='text', v-model='meter.label')
           .panel-footer
-            button.btn.btn-primary(@click.stop.prevent='save') saved ({{msg}})
+            button.btn.btn-primary(@click.stop.prevent='create') saved ({{msg}})
 </template>
