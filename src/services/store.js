@@ -1,48 +1,41 @@
-import Emitter from 'events'
-import Adapter from './adapter'
+/*eslint-disable*/
 
-class Store extends Emitter {
+import * as adapter from './adapter'
 
-  // constructor () {
-  //   super()
-  //   // todo
-  // }
-
-  serialize () {
-    // todo
-  }
-
-  deserialize (data) {
-    return JSON.parse(data)
-  }
-
-  create () {
-    // todo
-  }
-
-  /*eslint-disable*/
-  static findOne (model, id) {
-    // todo
-    const find = Adapter.findOne(model, id)
-    console.log('find', find)
-    const first = find.next()
-    console.log('first', first)
-    const second = find.next()
-    console.log('second', second)
-    return find.next()
-  }
-
-  findMany () {
-    // todo
-  }
-
-  update () {
-    // todo
-  }
-
-  destroy () {
-    // todo
-  }
+function serialize () {
+  // handled by SuperAgent
 }
 
-export default Store
+function deserialize (data) {
+  // handled by SuperAgent
+}
+
+export function create (model, data) {
+  return adapter.create(model, data)
+}
+
+export function findMany (model, query) {
+  return adapter.findMany(model, query)
+}
+
+export function findOne () {
+  // todo
+}
+
+export function update () {
+  // todo
+}
+
+export function destroy (model, id) {
+  return adapter.destroy(model, id)
+}
+
+// experiment with yield/generator
+export function findMany1 (model, query) {
+  const find = adapter.findMany1(model, query)
+  const res = find.next()
+  // const b = find.next()
+  // const c = find.next()
+  console.log('store:res', res.value.xhr.response)
+  return this.deserialize(res.value.xhr.response)
+}

@@ -1,6 +1,5 @@
 <script>
-import Store from '../../services/store'
-import request from 'superagent'
+import * as store from '../../services/store'
 
 const vue = {
   name: 'DevelopMeters',
@@ -23,47 +22,34 @@ const vue = {
   },
   route: {
     data () {
-      const done = Store.findOne('meter-models', 2)
-      console.log('done', done)
-      return true
-      // const meters = this.fetch('meters')
-      // const models = this.fetch('meter-models')
-      // const classes = this.fetch('meter-classes')
-      // return { meters, models, classes }
+      // return store.findMany1('meters')
+      return {
+        meters: store.findMany('meters'),
+        models: store.findMany('meter-models'),
+        classes: store.findMany('meter-classes')
+      }
     }
   },
   methods: {
     select (key, val) {
       this.filters[key] = val
     },
-    fetch (path) {
-      return new Promise((resolve, reject) => {
-        const url = 'http://localhost:3333/' + path
-        request.get(url)
-          .end((err, res) => { /* eslint-disable-line handle-callback-err */
-            resolve(JSON.parse(res.text))
-            err
-          })
-      })
-    },
-    save () {
-      const url = 'http://localhost:3333/meters'
-      request.post(url)
-        .send({ meter: this.meter })
-        .end((err, res) => { /* eslint-disable-line handle-callback-err */
-          this.msg = JSON.parse(res.text).result
-          err
-          this.fetch('meters')
-            .then(meters => { this.meters = meters })
+    reset (key, model) {
+      store.findMany(model)
+        .then(data => {
+          this.$set(key, data)
         })
     },
-    remove (meter) {
-      const url = 'http://localhost:3333/meters/' + meter.id
-      request.delete(url)
-        .end((err, res) => { /* eslint-disable-line handle-callback-err */
-          err
-          this.fetch('meters')
-            .then(meters => { this.meters = meters })
+    save () {
+      store.create('meters', this.meter)
+        .then(() => {
+          this.reset('meters', 'meters')
+        })
+    },
+    destroy (meter) {
+      store.destroy('meters', meter.id)
+        .then(() => {
+          this.reset('meters', 'meters')
         })
     },
     meterModel (meter) {
@@ -83,7 +69,7 @@ export default vue
 
 <template lang="jade">
 #develop-meters
-  .grid
+  .grid(v-if='!$loadingRouteData')
     .container
       .col-sm-3
         h3 meter classes
@@ -114,10 +100,10 @@ export default vue
           //- .panel-body
           ul.list-group
             li.list-group-item(v-for='meter in meters')
-              a(href, @click.stop.prevent='remove(meter)')
+              a(href, @click.stop.prevent='destroy(meter)')
                 span.glyphicon.glyphicon-remove-circle.text-danger.pull-right
               p # {{ meter.id }} :: {{ meter.label }} &nbsp;
-                span.label.label-primary {{ meterModel(meter) }}
+                //- span.label.label-primary {{ meterModel(meter) }}
               //- p
               //-   span.label.label-primary {{ meterModel(meter) }} &nbsp;
               //-   span.label.label-success {{ meterClass(meter) }}
