@@ -14,16 +14,16 @@ export function create (model, data) {
   return adapter.create(model, data)
 }
 
-export function findMany (model, query) {
-  return adapter.findMany(model, query)
+export function readMany (model, query) {
+  return adapter.readMany(model, query)
 }
 
-export function findOne () {
-  // todo
+export function readOne (model, id) {
+  return adapter.readOne(model, id)
 }
 
-export function update () {
-  // todo
+export function update (model, data) {
+  return adapter.update(model, data)
 }
 
 export function destroy (model, id) {
