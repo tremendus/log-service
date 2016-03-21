@@ -1,4 +1,5 @@
 <script>
+// todo: clean this up to es6
 /* eslint-disable */
 import LogService from '../../services/log'
 

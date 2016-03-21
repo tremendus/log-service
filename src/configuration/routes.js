@@ -1,21 +1,47 @@
 module.exports = {
 
   // application routes
-  '/app': {
-    name: 'app',
+  '/gateway': {
+    name: 'gateway',
     component: require('../components/layouts/default'),
     subRoutes: {
       '/home': {
         name: 'home',
         component: require('../components/home/index')
       },
-      '/meters': {
-        name: 'meters',
-        component: require('../components/develop/meters')
+      '/devices': {
+        name: 'devices',
+        component: {
+          name: 'Devices',
+          template: '<div id="#devices"><router-view /></div>'
+        },
+        subRoutes: {
+          '/': {
+            name: 'devices/index',
+            component: require('../components/devices/index')
+          },
+          '/view/:deviceId': {
+            name: 'devices/view',
+            component: require('../components/devices/view')
+          }
+        }
       },
       '/users': {
         name: 'users',
-        component: require('../components/develop/users')
+        component: {
+          name: 'Users',
+          template: '<div id="#users"><router-view /></div>'
+        },
+        subRoutes: {
+          '/': {
+            name: 'users/index',
+            component: require('../components/users/index')
+          },
+          '/view/:userId': {
+            name: 'users/view',
+            component: require('../components/users/view')
+          }
+        }
       }
     }
   }

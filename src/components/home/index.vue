@@ -7,5 +7,8 @@ export default vue
 
 <template lang="jade">
 #home-index
-  h1 welcome home!
+  .container-fluid
+    .row
+      .col-xs-12
+        h3 gateway home
 </template>

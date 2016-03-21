@@ -1,33 +1,47 @@
 <script>
-import uiNotification from '../interface/notification.vue'
-// import navLeft from '../interface/nav-left.vue'
-// import navMain from '../interface/nav-main.vue'
+import uiHeader from '../interface/header.vue'
+import uiNavigation from '../interface/navigation.vue'
+import uiFooter from '../interface/footer.vue'
 
 export default {
   name: 'DefaultLayout',
   components: {
-    uiNotification
-    // searchIndex,
-    // navLeft,
-    // navMain
+    uiHeader,
+    uiNavigation,
+    uiFooter
   },
-  methods: {
-    toggleNav: function () {
-      this.$el.classList.toggle('hidden-menu')
-    }
-  },
-  events: {
-    'ui:nav:toggle': function () {
-      this.toggleNav()
+  computed: {
+    uiHeader: function () {
+      return 'uiHeader'
+      // return 'uiHeader' + (this.uiClass ? this.uiClass : '')
+    },
+    uiNavigation: function () {
+      return 'uiNavigation'
+      // return 'uiNavigation' + (this.uiClass ? this.uiClass : '')
+    },
+    uiFooter: function () {
+      return 'uiFooter'
+      // return 'uiFooter' + (this.uiClass ? this.uiClass : '')
     }
   }
 }
 </script>
 
 <template lang="jade">
-#default-layout.user-interface
-  ui-notification
-  //- nav-left
-  //- nav-main
-  router-view
+#defaut-layout
+  component(:is='uiHeader')
+  component(:is='uiNavigation')
+  #content-wrapper
+    router-view
+  component(:is='uiFooter')
 </template>
+
+<style lang="stylus">
+#defaut-layout
+  min-height 100%
+  height 100%
+  display flex
+  flex-direction column
+  #content-wrapper
+    flex 1 1 auto
+</style>
