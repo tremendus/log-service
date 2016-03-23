@@ -64,5 +64,16 @@ module.exports = {
         }
       }
     }
+  },
+
+  // login
+  '/login': {
+    component: require('../components/layouts/mask'),
+    subRoutes: {
+      '/index': {
+        name: 'login/index',
+        component: require('../components/login/index')
+      }
+    }
   }
 }

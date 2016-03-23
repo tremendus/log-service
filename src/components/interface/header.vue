@@ -11,8 +11,8 @@ export default {
     }
   },
   methods: {
-    logout (event) {
-      this.$root.$broadcast('session:logout')
+    toggle (event) {
+      this.$root.$broadcast('navigation:toggle')
     }
   }
 }
@@ -25,31 +25,26 @@ export default {
 
       // brand
       .navbar-header
-        a.navbar-brand(v-link='"/home/index"')
+        button.navbar-toggle.pull-left(@click='toggle')
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        a.navbar-brand.pull-right(v-link='"/home/index"')
           // todo: make logo dynamic based on theme
           img(src='../../assets/images/logo-accuenergy.png', height='100%')
 
-      //- tablet and larger navigation
-      .collapse.navbar-collapse
-        ul.nav.navbar-nav.navbar-right.hidden-xs
-          li(v-for='nav in navigation')
-            a(v-link='nav.route') {{nav.label}}
-          //- li
-            //- a(v-link='"/home/index"') Dashboard
-          //- li(v-for='sectionName in sections')
-          //-   a.dropdown-toggle(href='javascript:;', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-          //-     | {{menus[sectionName].label}}
-          //-     span.caret
-          //-   ul.dropdown-menu(role='menu')
-          //-     li(v-for='item in menus[sectionName].options')
-          //-       a(v-link='item.path', v-text='item.label')
-          li
-            a(href='javascript:;', @click='logout') Logout
+
 </template>
 
 <style lang="stylus">
-#ui-header .navbar
-  margin-bottom 0
-  border-radius 0
-  background-color #fff
+#ui-header
+  .navbar
+    margin-bottom 0
+    border-radius 0
+    background-color #fff
+    .navbar-toggle
+      margin-left 1em
+    border-top transparent
+    border-right transparent
+    border-left transparent
 </style>

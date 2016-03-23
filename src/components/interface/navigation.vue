@@ -10,6 +10,9 @@ const vue = {
     }
   },
   methods: {
+    toggle () {
+      this.$root.$broadcast('navigation:toggle')
+    },
     logout (event) {
       this.$root.$broadcast('session:logout')
     }
@@ -22,6 +25,8 @@ export default vue
 <template lang="jade">
 #ui-navigation
   .sidebar
+    //- todo: better mobile nav close button
+    a.pull-right.visible-xs(href='javascript:;', @click='toggle') x
     ul.menu-root
       li(v-for='nav in navigation')
         a(v-if='nav.route', v-link='nav.route') {{ nav.label }}
@@ -37,16 +42,16 @@ export default vue
 
 <style lang="stylus">
 #ui-navigation
+  z-index 1
+  background-color #fff
   position fixed
   top 0
   bottom 0
-  left 0
-  width 200px
   padding 1rem
   overflow-x none
   overflow-y auto
 .sidebar
-  padding: 1rem
+  padding 1rem
   .menu-root
     padding-left 0
   ul
@@ -60,4 +65,5 @@ export default vue
     margin-top 0.35rem
     margin-bottom 0.35rem
     border-bottom 1px solid rgba(0, 0, 0, 0.15)
+
 </style>
