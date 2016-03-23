@@ -29,11 +29,11 @@ export default {
 
 <template lang="jade">
 #defaut-layout
-  component(:is='uiHeader')
+  //- component(:is='uiHeader')
   component(:is='uiNavigation')
   #content-wrapper
     router-view
-  component(:is='uiFooter')
+  //- component(:is='uiFooter')
 </template>
 
 <style lang="stylus">
@@ -42,6 +42,12 @@ export default {
   height 100%
   display flex
   flex-direction column
-  #content-wrapper
-    flex 1 1 auto
+#content-wrapper
+  /*flex 1 1 auto*/
+  position fixed
+  top 0
+  bottom 0
+  left 200px
+  right 0
+  overflow auto
 </style>

@@ -23,6 +23,10 @@ module.exports = {
           '/view/:deviceId': {
             name: 'devices/view',
             component: require('../components/devices/view')
+          },
+          '/add': {
+            name: 'devices/add',
+            component: require('../components/devices/add')
           }
         }
       },
@@ -40,7 +44,23 @@ module.exports = {
           '/view/:userId': {
             name: 'users/view',
             component: require('../components/users/view')
+          },
+          '/edit/:userId': {
+            name: 'users/edit',
+            component: require('../components/users/edit')
+          },
+          '/add': {
+            name: 'users/add',
+            component: require('../components/users/add')
           }
+        }
+      },
+
+      // no route
+      'no-route': {
+        name: 'no-route',
+        component: {
+          template: '<div><h3>Route not wired up</h3><p>Add config/route, add to config/navigation, create components/component.vue</p></div>'
         }
       }
     }

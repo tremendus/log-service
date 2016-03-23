@@ -36,5 +36,6 @@ export default vue
               td
                 a(v-link='{ name: "users/view", params: { userId: user.id } }', v-text='user.name')
               td {{ user.email }}
-              td {{ user.isAdmin ? 'Admin' : 'User' }}
+              td {{ user.is_admin ? 'Admin' : 'User' }}
+        a.btn.btn-primary(v-link='{ name: "users/add" }') Add User
 </template>

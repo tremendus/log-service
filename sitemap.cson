@@ -3,10 +3,10 @@ home
     status (last transaction)
   error summary
 devices
-  list
+  list - refresh every 1s?
     view
     edit
-    ping
+    ping/status - refresh every 5s?
   add
   (scan)
 reporting
@@ -18,7 +18,7 @@ reporting
       delete
   templates
 settings
-  users
+  users - admin, user
   network
   protocols
     modbus

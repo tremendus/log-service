@@ -1,8 +1,10 @@
 <script>
 import * as store from '../../services/store'
+import userForm from './form'
 
 const vue = {
   name: 'UsersView',
+  components: { userForm },
   data () {
     return {
       user: []
@@ -14,17 +16,25 @@ const vue = {
         user: store.readOne('users', this.$route.params.userId)
       }
     }
+  },
+  methods: {
+    update () {
+      store.update('users', this.user[0])
+    }
   }
 }
 export default vue
 </script>
 
 <template lang="jade">
-#users-view
+#users-edit
   .container-fluid(v-if='!$loadingRouteData')
     .row
       .col-xs-12
-        h3 {{user[0].name}}
-        debug(:debug='user[0]')
-        a.btn.btn-warning(v-link='{ name: "users/edit", params: { userId: user[0].id } }') Edit
+        h3 Edit User : {{ user[0].name }}
+        .panel.panel-default
+          .panel-body
+            user-form(:user.sync='user[0]')
+          .panel-footer
+            button.btn.btn-primary(@click.stop.prevent='update') Save
 </template>
