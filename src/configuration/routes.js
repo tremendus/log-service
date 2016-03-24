@@ -30,6 +30,7 @@ module.exports = {
           }
         }
       },
+      // todo: move to settings?
       '/users': {
         name: 'users',
         component: {
@@ -52,6 +53,19 @@ module.exports = {
           '/add': {
             name: 'users/add',
             component: require('../components/users/add')
+          }
+        }
+      },
+      '/settings': {
+        name: 'settings',
+        component: {
+          name: 'settings',
+          template: '<div id="#settings"><router-view /></div>'
+        },
+        subRoutes: {
+          '/network': {
+            name: 'settings/network',
+            component: require('../components/settings/network')
           }
         }
       },

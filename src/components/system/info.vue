@@ -35,11 +35,14 @@ export default vue
 
 <template lang="jade">
 #system-info
-  h3 system info
-  .input-group
-    label shell command to run
-    input.form-control(type='text', v-model='command')
-  .input-group
-    button.btn.btn-primary(@click='send') send
-  debug(:debug='info')
+  .container-fluid
+    .row
+      .col-xs-12
+        h3 system info
+        .input-group
+          label shell command to run
+          input.form-control(type='text', v-model='command')
+        .input-group
+          button.btn.btn-primary(@click='send') send
+        debug(:debug='info')
 </template>

@@ -40,7 +40,7 @@ export default {
         },
         network: {
           label: 'Network',
-          route: { name: 'no-route' }
+          route: { name: 'settings/network' }
         },
         protocols: {
           label: 'Protocols',
