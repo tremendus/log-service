@@ -16,6 +16,7 @@ const vue = {
     }
   }
 }
+
 export default vue
 </script>
 

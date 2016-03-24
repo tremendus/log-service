@@ -33,7 +33,7 @@ module.exports = {
       '/users': {
         name: 'users',
         component: {
-          name: 'Users',
+          name: 'users',
           template: '<div id="#users"><router-view /></div>'
         },
         subRoutes: {
@@ -52,6 +52,31 @@ module.exports = {
           '/add': {
             name: 'users/add',
             component: require('../components/users/add')
+          }
+        }
+      },
+      '/system': {
+        name: 'system',
+        component: {
+          name: 'system',
+          template: '<div id="#system"><router-view /></div>'
+        },
+        subRoutes: {
+          '/info': {
+            name: 'system/info',
+            component: require('../components/system/info')
+          },
+          '/status': {
+            name: 'system/status',
+            component: require('../components/system/status')
+          },
+          '/logs': {
+            name: 'system/logs',
+            component: require('../components/system/logs')
+          },
+          '/tests': {
+            name: 'system/tests',
+            component: require('../components/system/tests')
           }
         }
       },

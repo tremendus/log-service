@@ -71,9 +71,8 @@ export default {
   display flex
   flex-direction column
 #content-wrapper
-
   transition left 0.35s
-  flex 1 1 auto
+  /*flex 1 1 auto*/
   position fixed
   top 0
   right 0

@@ -57,19 +57,19 @@ export default {
       links: {
         info: {
           label: 'Info',
-          route: { name: 'no-route' }
+          route: { name: 'system/info' }
         },
         status: {
           label: 'Status',
-          route: { name: 'no-route' }
+          route: { name: 'system/status' }
         },
         logs: {
           label: 'Logs',
-          route: { name: 'no-route' }
+          route: { name: 'system/logs' }
         },
         tests: {
           label: 'Tests',
-          route: { name: 'no-route' }
+          route: { name: 'system/tests' }
         }
       }
     }

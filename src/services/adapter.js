@@ -1,10 +1,9 @@
-/* eslint-disable */
+// todo: configuration for adapter
 
 import request from 'superagent'
 // import config from '../configuration/adapter'
 
-// class Adapter extends Emitter {
-
+// todo: handle caught errors
 function error (err) {
   console.error('handledError', err)
 }
@@ -16,7 +15,7 @@ export function create (model, data) {
       .post(url)
       .send(data)
       .end((err, res) => { err ? reject(err) : resolve(res.body) })
-    }).catch(error)
+  }).catch(error)
 }
 
 export function readOne (model, id) {
@@ -44,7 +43,7 @@ export function update (model, data) {
       .put(url)
       .send(data)
       .end((err, res) => { err ? reject(err) : resolve(res.body) })
-    }).catch(error)
+  }).catch(error)
 }
 
 export function destroy (model, id) {
@@ -53,11 +52,14 @@ export function destroy (model, id) {
     request
       .delete(url)
       .end((err, res) => { err ? reject(err) : resolve(res.body) })
-    }).catch(error)
+  }).catch(error)
 }
 
-// experiment with yield
-export function * findMany1 (model, query) {
-  const url = ['http://localhost:3333', model].join('/')
-  return request.get(url).end((err, res) => res)
+export function action (route, method = 'get') {
+  // todo: consider implementings opts (eg to post data)
+  const url = ['http://localhost:3333', route].join('/')
+  return new Promise((resolve, reject) => {
+    request[method](url)
+      .end((err, res) => { err ? reject(err) : resolve(res.body) })
+  }).catch(error)
 }
