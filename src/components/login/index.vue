@@ -2,26 +2,30 @@
 import LogService from '../../services/log'
 import session from '../../services/session'
 
-const logger = new LogService({ label: 'login', silent: 0 })
+const logger = new LogService({ label: 'login/index', silent: 0 })
+logger.log('sesssion', session)
 
 const vue = {
   name: 'LoginIndex',
   data () {
     return {
       user: {
-        email: '',
-        password: ''
+        email: 'andrea@tremendusapps.com',
+        _password: 'function'
       },
       isLoggingIn: false
     }
   },
+  computed: {
+    auth () {
+      return session.state
+    }
+  },
   methods: {
-    login (event) {
-      logger.log('login()', this.user, event)
-      this.isLoggingIn = true
-      event.preventDefault()
-      event.stopPropagation()
-      session.authenticate(this.user)
+    login () {
+      logger.log('login()', this.user)
+      // this.isLoggingIn = true
+      session.authenticate({ user: this.user })
     }
   }
 }
@@ -42,11 +46,12 @@ module.exports = vue
             input.form-control(type='text', v-model='user.email', placeholder='Email', required='', autofocus='', autocomplete='off')
           .form-group
             label Password
-            input.form-control(type='password', v-model='user.password', v-on:keyup.enter='login', placeholder='Password', required='', autocomplete='off')
+            input.form-control(type='password', v-model='user._password', v-on:keyup.enter='login', placeholder='Password', required='', autocomplete='off')
           .form-group(v-if='!isLoggingIn')
-            a.btn.btn-lg.btn-primary.btn-block(v-on:click='login') Sign in
+            a.btn.btn-lg.btn-primary.btn-block(v-on:click.stop.prevent='login') Sign in
           .form-group(v-else)
             spinner.spinner-tight
+          debug(:debug='auth')
 </template>
 
 <style lang="stylus">

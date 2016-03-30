@@ -17,7 +17,7 @@ const vue = {
   },
   methods: {
     update () {
-      adapter.update(null, this.network, { url: 'settings/write-network' } )
+      adapter.update(null, this.network, { url: 'settings/write-network' })
     }
   }
 }
@@ -36,15 +36,17 @@ export default vue
             .panel-body
               .checkbox
                 label
-                  input(type='checkbox', v-model='network.en[0][1].dhcp')
-                  | Use DHCP
+                  input(type='checkbox', xv-model='network.en[0][1].upnp')
+                  | Use UPnP
+              //- todo: div if not UPnp
               .checkbox
                 label
-                  input(type='checkbox', v-model='network.en[0][1].upnp')
-                  | Use UPnP
+                  input(type='checkbox', xv-model='network.en[0][1].dhcp')
+                  | Use DHCP
+              //- todo: div if !UPnP && !DHCP
               .form-groups
                 label IP Address
-                input.form-control(type='text', v-model='network.en[0][1].address')
+                input.form-control(type='text', v-model='network.en0[1].address')
               .form-group
                 label Gateway
                 input.form-control(type='text', xv-model='network.en[0][1].gateway')
@@ -63,6 +65,12 @@ export default vue
               .form-group
                 label Ethernet MTU
                 input.form-control(type='text', xv-model='network.en[0][1].mtu')
+              .form-groups
+                label Proxy Address
+                input.form-control(type='text', xv-model='network.en[0][1].proxy_address')
+              .form-group
+                label Proxy Port
+                input.form-control(type='text', xv-model='network.en[0][1].proxy_port')
             .panel-footer
               button.btn.btn-primary(@click.stop.prevent='update') Save
         debug(:debug='network')

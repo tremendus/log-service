@@ -2,6 +2,7 @@ import 'babel-polyfill'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import DebugComponent from './plugins/debug'
+import SpinnerComponent from './plugins/spinner'
 import routerConfig from './configuration/router'
 import routes from './configuration/routes'
 // import { initialize as initializeRouter } from './services/router'
@@ -12,6 +13,7 @@ import AppVue from './components/app.vue'
 Vue.config.debug = true
 Vue.use(VueRouter)
 Vue.use(DebugComponent)
+Vue.use(SpinnerComponent)
 
 // session
 // initializeSession()
