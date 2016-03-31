@@ -1,12 +1,12 @@
 <script>
 const vue = {
-  name: 'DevelopMeters'
+  name: 'Users'
 }
 export default vue
 </script>
 
 <template lang="jade">
-#develop-meters
+#users
   .grid
     .container
       .col-sm-6.col-sm-offset-3

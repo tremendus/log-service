@@ -11,7 +11,7 @@ const vue = {
   route: {
     data () {
       return {
-        device: store.readOne('meters', this.$route.params.deviceId)
+        device: store.readOne('devices', this.$route.params.deviceId)
       }
     }
   }

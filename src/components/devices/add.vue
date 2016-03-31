@@ -9,7 +9,7 @@ const vue = {
       classes: [],
       device: {
         label: '',
-        meter_model: '',
+        device_model: '',
         meta: {
           protocols: {
             modbus: {
@@ -35,17 +35,17 @@ const vue = {
   route: {
     data () {
       return {
-        models: store.readMany('meter-models'),
-        classes: store.readMany('meter-classes')
+        models: store.readMany('device-models'),
+        classes: store.readMany('device-classes')
       }
     }
   },
   methods: {
     create () {
-      store.create('meters', this.meter)
+      store.create('devices', this.device)
         .then(() => {
-          this.reset('meters', 'meters')
-          this.meter.label = ''
+          this.reset('devices', 'devices')
+          this.device.label = ''
         })
     },
     reset (key, model) {
@@ -69,7 +69,7 @@ export default vue
         h3 Add Device
         .panel.panel-default
           //- .panel-heading
-            //- .panel-title new meter
+            //- .panel-title new device
           .panel-body
             form.form
               .form-group
@@ -77,7 +77,7 @@ export default vue
                 input.form-control(type='text', v-model='device.label')
               .form-group
                 label Model
-                select.form-control(v-model='device.meter_model')
+                select.form-control(v-model='device.device_model')
                   option(v-for='model in models', :value='model.id', v-text='model.label')
               //- .form-group
               //-   label class

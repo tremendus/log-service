@@ -7,9 +7,9 @@ const vue = {
   data () {
     return {
       msg: '',
-      meter: {
+      device: {
         label: '',
-        meter_model: '',
+        device_model: '',
         meta: {
           protocols: {
             modbus: {
@@ -29,11 +29,11 @@ const vue = {
           }
         }
       },
-      meters: [],
+      devices: [],
       models: [],
       classes: [],
       filters: {
-        meter: '',
+        device: '',
         model: '',
         class: ''
       },
@@ -41,35 +41,35 @@ const vue = {
     }
   },
   computed: {
-    fmeter () {
-      return this.meters.find(m => m.id === this.filters.meter) || {}
+    fdevice () {
+      return this.devices.find(m => m.id === this.filters.device) || {}
     },
     classById () {
-      const id = this.meter.meter_model
+      const id = this.device.device_model
       console.log('classById', id)
       if (!id) {
         return ''
       }
       const model = this.models.find(m => m.id === id)
-      return this.classes.find(c => c.id === model.meter_class).label
+      return this.classes.find(c => c.id === model.device_class).label
     }
   },
   route: {
     data () {
-      // return store.readMany1('meters')
+      // return store.readMany1('devices')
       return {
-        meters: store.readMany('meters'),
-        models: store.readMany('meter-models'),
-        classes: store.readMany('meter-classes')
+        devices: store.readMany('devices'),
+        models: store.readMany('device-models'),
+        classes: store.readMany('device-classes')
       }
     }
   },
   methods: {
     create () {
-      store.create('meters', this.meter)
+      store.create('devices', this.device)
         .then(() => {
-          this.reset('meters', 'meters')
-          this.meter.label = ''
+          this.reset('devices', 'devices')
+          this.device.label = ''
         })
     },
     reset (key, model) {
@@ -79,16 +79,16 @@ const vue = {
         })
     },
     update () {
-      console.log('update()', this.fmeter)
-      store.update('meters', this.fmeter)
+      console.log('update()', this.fdevice)
+      store.update('devices', this.fdevice)
         .then(() => {
-          this.reset('meters', 'meters')
+          this.reset('devices', 'devices')
         })
     },
-    destroy (meter) {
-      store.destroy('meters', meter.id)
+    destroy (device) {
+      store.destroy('devices', device.id)
         .then(() => {
-          this.reset('meters', 'meters')
+          this.reset('devices', 'devices')
         })
     },
     select (key, val) {
@@ -98,16 +98,16 @@ const vue = {
         this.filters[key] = val
       }
     },
-    meterModel (meter) {
-      const model = this.models.find(m => m.id === meter.meter_model)
+    deviceModel (device) {
+      const model = this.models.find(m => m.id === device.device_model)
       return model.label
     },
-    meterClass (meter) {
-      if (!meter) {
+    deviceClass (device) {
+      if (!device) {
         return ''
       }
-      const model = this.models.find(m => m.id === meter.meter_model)
-      const mclass = this.classes.find(c => c.id === model.meter_class)
+      const model = this.models.find(m => m.id === device.device_model)
+      const mclass = this.classes.find(c => c.id === model.device_class)
       return mclass.label
     }
   }
@@ -116,11 +116,11 @@ export default vue
 </script>
 
 <template lang="jade">
-#develop-meters
+#develop-devices
   .grid(v-if='!$loadingRouteData')
     .container
       .col-sm-3
-        h3 meter classes
+        h3 device classes
         .panel.panel-default
           .panel-heading
             .panel-title list of classes
@@ -130,62 +130,62 @@ export default vue
               | # {{ class.id }} :: {{ class.label }}
           .panel-footer
             | {{ classes.length }} classes fetched
-        h3 meter models
+        h3 device models
         .panel.panel-default
           .panel-heading
             .panel-title list of models
           //- .panel-body
           ul.list-group
-            li.list-group-item(v-for='model in models | filterBy filters.class in "meter_class"', @click='select("model", model.id)', v-bind:class='{ "active" : model.id === filters.model }')
+            li.list-group-item(v-for='model in models | filterBy filters.class in "device_class"', @click='select("model", model.id)', v-bind:class='{ "active" : model.id === filters.model }')
               | # {{ model.id }} :: {{ model.label }}
           .panel-footer
             | {{ models.length }} models fetched
       .col-sm-6
-        h3 meters
+        h3 devices
         .panel.panel-default
           .panel-heading
-            .panel-title list of meters
+            .panel-title list of devices
           //- .panel-body
           ul.list-group
-            li.list-group-item(v-for='_meter in meters | filterBy filters.model in "meter_model"', @click='select("meter", _meter.id)', v-bind:class='{ "active" : meter.id === filters.meter }')
-              a(href, @click.stop.prevent='destroy(_meter)')
+            li.list-group-item(v-for='_device in devices | filterBy filters.model in "device_model"', @click='select("device", _device.id)', v-bind:class='{ "active" : device.id === filters.device }')
+              a(href, @click.stop.prevent='destroy(_device)')
                 span.glyphicon.glyphicon-remove-circle.text-danger.pull-right
-              p # {{ _meter.id }} :: {{ _meter.label }} &nbsp;
-                //- span.label.label-primary {{ meterModel(meter) }}
+              p # {{ _device.id }} :: {{ _device.label }} &nbsp;
+                //- span.label.label-primary {{ deviceModel(device) }}
               //- p
-              //-   span.label.label-primary {{ meterModel(meter) }} &nbsp;
-              //-   span.label.label-success {{ meterClass(meter) }}
+              //-   span.label.label-primary {{ deviceModel(device) }} &nbsp;
+              //-   span.label.label-success {{ deviceClass(device) }}
           .panel-footer
-            | {{ meters.length }} meters fetched
-        h3 meters
-        .panel.panel-default(v-if='fmeter')
+            | {{ devices.length }} devices fetched
+        h3 devices
+        .panel.panel-default(v-if='fdevice')
           .panel-heading
-            .panel-title {{fmeter.label}}
+            .panel-title {{fdevice.label}}
           .panel-body
             form.form
               .form-group
                 label label
-                input.form-control(type='text', :value='fmeter.label')
+                input.form-control(type='text', :value='fdevice.label')
           .panel-footer
             button.btn.btn-success(@click.stop.prevent='update') update
         .panel.panel-default
           .panel-heading debug
           .panel-body
-            debug(:debug='fmeter', label='meter')
+            debug(:debug='fdevice', label='device')
       .col-sm-3
-        h3 new meter
+        h3 new device
         .panel.panel-default
           .panel-heading
-            .panel-title new meter
+            .panel-title new device
           .panel-body
             form.form
               .form-group
                 label label
-                input.form-control(type='text', v-model='meter.label')
+                input.form-control(type='text', v-model='device.label')
               .form-group
                 label model
-                select.form-control(v-model='meter.meter_model')
-                  option(v-for='model in models | filterBy filters.class in "meter_class"', :value='model.id', v-text='model.label')
+                select.form-control(v-model='device.device_model')
+                  option(v-for='model in models | filterBy filters.class in "device_class"', :value='model.id', v-text='model.label')
               .form-group
                 label class
                 input.form-control(type='text', readonly, v-model='classById')
@@ -200,30 +200,30 @@ export default vue
           .panel-body(v-if='isTcp === "tcp"')
             .form-group
               label ip address
-              input.form-control(type='text', v-model='meter.meta.protocols.modbus.tcp.ip')
+              input.form-control(type='text', v-model='device.meta.protocols.modbus.tcp.ip')
             .form-group
               label port
-              input.form-control(type='text', v-model='meter.meta.protocols.modbus.tcp.port')
+              input.form-control(type='text', v-model='device.meta.protocols.modbus.tcp.port')
 
           .panel-body(v-if='isTcp === "rtu"')
             .form-group
               label device
-              input.form-control(type='text', v-model='meter.meta.protocols.modbus.rtu.device')
+              input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.device')
             .form-group
               label port
-              input.form-control(type='text', v-model='meter.meta.protocols.modbus.rtu.port')
+              input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.port')
             .form-group
               label baud
-              input.form-control(type='text', v-model='meter.meta.protocols.modbus.rtu.baud')
+              input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.baud')
             .form-group
               label dataBit
-              input.form-control(type='text', v-model='meter.meta.protocols.modbus.rtu.dataBit')
+              input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.dataBit')
             .form-group
               label parity
-              input.form-control(type='text', v-model='meter.meta.protocols.modbus.rtu.parity')
+              input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.parity')
             .form-group
               label stopBit
-              input.form-control(type='text', v-model='meter.meta.protocols.modbus.rtu.stopBit')
+              input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.stopBit')
 
           .panel-footer
             button.btn.btn-primary(@click.stop.prevent='create') save ({{msg}})

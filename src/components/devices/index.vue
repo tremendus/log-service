@@ -11,7 +11,7 @@ const vue = {
   route: {
     data () {
       return {
-        devices: store.readMany('meters')
+        devices: store.readMany('devices')
       }
     }
   }
