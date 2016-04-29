@@ -1,5 +1,11 @@
 module.exports = {
 
+  // develop routes
+  '/adapter': {
+    name: 'adapter',
+    component: require('../components/develop/adapter')
+  },
+
   // application routes
   '/gateway': {
     name: 'gateway',
@@ -59,7 +65,7 @@ module.exports = {
       '/settings': {
         name: 'settings',
         component: {
-          name: 'settings',
+          name: 'Settings',
           template: '<div id="#settings"><router-view /></div>'
         },
         subRoutes: {
@@ -72,7 +78,7 @@ module.exports = {
       '/system': {
         name: 'system',
         component: {
-          name: 'system',
+          name: 'System',
           template: '<div id="#system"><router-view /></div>'
         },
         subRoutes: {
@@ -94,7 +100,19 @@ module.exports = {
           }
         }
       },
-
+      '/reports': {
+        name: 'reports',
+        component: {
+          name: 'Reports',
+          template: '<div id="#reports"><router-view /></div>'
+        },
+        subRoutes: {
+          '/add': {
+            name: 'reports/add',
+            component: require('../components/reports/add')
+          }
+        }
+      },
       // no route
       'no-route': {
         name: 'no-route',

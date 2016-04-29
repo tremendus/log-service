@@ -1,17 +1,17 @@
 <script>
-import * as store from '../../services/store'
+import { readMany } from '../../services/store'
 
 const vue = {
   name: 'DevicesIndex',
   data () {
     return {
-      devices: []
+      collection: []
     }
   },
   route: {
     data () {
       return {
-        devices: store.readMany('devices')
+        collection: readMany('device')
       }
     }
   }
@@ -31,7 +31,7 @@ export default vue
             tr
               th Device Label
           tbody
-            tr(v-for='device in devices')
+            tr(v-for='model in collection')
               td
-                a(v-link='{ name: "devices/view", params: { deviceId: device.id } }', v-text='device.label')
+                a(v-link='{ name: "devices/view", params: { deviceId: model.id } }', v-text='model.label')
 </template>

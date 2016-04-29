@@ -1,15 +1,17 @@
 <script>
-import * as store from '../../services/store'
+import { readMany, create } from '../../services/store'
 
 const vue = {
   name: 'DevicesAdd',
   data () {
     return {
-      models: [],
-      classes: [],
+      collection: [],
+      query: {
+        related: ['device_class', 'device_definition']
+      },
       device: {
         label: '',
-        device_model: '',
+        device_model_id: null,
         meta: {
           protocols: {
             modbus: {
@@ -32,24 +34,32 @@ const vue = {
       useProtocol: 'tcp'
     }
   },
+  computed: {
+    devices () {
+      const collection = Object.assign([], this.collection)
+      collection.unshift({ id: false, label: 'Choose the model of your device' })
+      return collection
+    }
+  },
   route: {
     data () {
       return {
-        models: store.readMany('device-models'),
-        classes: store.readMany('device-classes')
+        collection: readMany('device_model', this.query)
       }
     }
   },
   methods: {
     create () {
-      store.create('devices', this.device)
+      create('device', this.device)
         .then(() => {
-          this.reset('devices', 'devices')
-          this.device.label = ''
+          console.warn('No event handler on create')
+          // this.reset('devices', 'devices')
+          // this.device.label = ''
         })
     },
     reset (key, model) {
       this.$set(key, model)
+      console.warn('No event handler on reset')
       // store.readMany(model)
       //   .then(data => {
       //     this.$set(key, data)
@@ -68,8 +78,8 @@ export default vue
       .col-xs-12
         h3 Add Device
         .panel.panel-default
-          //- .panel-heading
-            //- .panel-title new device
+          .panel-heading
+            .panel-title Device Details
           .panel-body
             form.form
               .form-group
@@ -77,12 +87,8 @@ export default vue
                 input.form-control(type='text', v-model='device.label')
               .form-group
                 label Model
-                select.form-control(v-model='device.device_model')
-                  option(v-for='model in models', :value='model.id', v-text='model.label')
-              //- .form-group
-              //-   label class
-              //-   input.form-control(type='text', readonly, v-model='classById')
-              //- .form-group
+                select.form-control(v-model='device.device_model_id')
+                  option(v-for='model in devices', :value='model.id', v-text='model.label')
               label.checkbox-inline
                 input(type='radio', v-model='useProtocol', value='tcp')
                 | &nbsp; TCP

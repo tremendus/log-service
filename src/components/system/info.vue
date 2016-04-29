@@ -1,5 +1,5 @@
 <script>
-import { action } from '../../services/adapter'
+import { action } from '../../services/store'
 
 const vue = {
   name: 'SystemInfo',

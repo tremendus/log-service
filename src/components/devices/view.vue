@@ -1,17 +1,17 @@
 <script>
-import * as store from '../../services/store'
+import { readOne } from '../../services/store'
 
 const vue = {
   name: 'DevicesView',
   data () {
     return {
-      device: []
+      model: []
     }
   },
   route: {
     data () {
       return {
-        device: store.readOne('devices', this.$route.params.deviceId)
+        model: readOne('device', this.$route.params.deviceId)
       }
     }
   }
@@ -24,6 +24,6 @@ export default vue
   .container-fluid
     .row
       .col-xs-12(v-if='!$loadingRouteData')
-        h3 {{device[0].label}}
-        debug(:debug='device[0]')
+        h3 {{model.label}}
+        debug(:debug='model')
 </template>

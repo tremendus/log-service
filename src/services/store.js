@@ -1,5 +1,4 @@
-/*eslint-disable*/
-
+/* eslint-disable no-unused-vars */
 import * as adapter from './adapter'
 
 function serialize () {
@@ -10,32 +9,26 @@ function deserialize (data) {
   // handled by SuperAgent
 }
 
-export function create (model, data) {
-  return adapter.create(model, data)
+export function create (model, data, opts) {
+  return adapter.create(model, data, opts)
 }
 
-export function readMany (model, query) {
-  return adapter.readMany(model, query)
+export function readMany (model, query, opts) {
+  return adapter.readMany(model, query, opts)
 }
 
-export function readOne (model, id) {
-  return adapter.readOne(model, id)
+export function readOne (model, id, opts) {
+  return adapter.readOne(model, id, opts)
 }
 
-export function update (model, data) {
-  return adapter.update(model, data)
+export function update (model, data, opts) {
+  return adapter.update(model, data, opts)
 }
 
-export function destroy (model, id) {
-  return adapter.destroy(model, id)
+export function destroy (model, id, opts) {
+  return adapter.destroy(model, id, opts)
 }
 
-// experiment with yield/generator
-export function findMany1 (model, query) {
-  const find = adapter.findMany1(model, query)
-  const res = find.next()
-  // const b = find.next()
-  // const c = find.next()
-  console.log('store:res', res.value.xhr.response)
-  return this.deserialize(res.value.xhr.response)
+export function action (route, method, opts) {
+  return adapter.action(route, method, opts)
 }

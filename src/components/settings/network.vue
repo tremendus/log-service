@@ -1,5 +1,5 @@
 <script>
-import * as adapter from '../../services/adapter'
+import * as adapter from '../../services/store'
 
 const vue = {
   name: 'SettingsNetwork',

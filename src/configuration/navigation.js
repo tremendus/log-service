@@ -24,6 +24,10 @@ export default {
           label: 'Reports',
           route: { name: 'no-route' }
         },
+        reports_add: {
+          label: 'Reports Add',
+          route: { name: 'reports/add' }
+        },
         templates: {
           label: 'Templates',
           route: { name: 'no-route' }

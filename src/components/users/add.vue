@@ -1,5 +1,5 @@
 <script>
-import * as store from '../../services/store'
+import { create } from '../../services/store'
 import userForm from './form'
 
 const vue = {
@@ -12,7 +12,7 @@ const vue = {
   },
   methods: {
     create () {
-      store.create('users', this.user)
+      create('user', this.user)
         .then(() => {
           this.$set('user', {})
         })

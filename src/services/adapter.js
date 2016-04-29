@@ -1,65 +1,53 @@
-// todo: configuration for adapter
-
 import request from 'superagent'
 import config from '../configuration/adapter'
+import LogService from 'tremendus-es6-logger'
 
-// todo: handle caught errors
+const logger = new LogService({ label: 'adapter', silent: 0 })
+
 function error (err) {
-  console.error('handledError', err)
+  logger.error('handledError', err)
 }
 
 export function create (model, data, opts = {}) {
-  const url = opts.url || [config.host, model].join('/')
-  return new Promise((resolve, reject) => {
-    request
-      .post(url)
-      .send(data)
-      .end((err, res) => { err ? reject(err) : resolve(res.body) })
-  }).catch(error)
+  const route = opts.url || ['api', model].join('/')
+  const send = Object.assign({}, opts, { data: { model: data } })
+  logger.log('create()', send)
+  return action(route, 'post', send)
 }
 
 export function readOne (model, id, opts = {}) {
-  const url = opts.url || [config.host, model, id].join('/')
-  return new Promise((resolve, reject) => {
-    request
-      .get(url)
-      .end((err, res) => { err ? reject(err) : resolve(res.body) })
-  }).catch(error)
+  const route = opts.url || ['api', model, id].join('/')
+  const send = opts
+  logger.log('read()', send)
+  return action(route, 'get', send)
 }
 
 export function readMany (model, query, opts = {}) {
-  const url = opts.url || [config.host, model].join('/')
-  return new Promise((resolve, reject) => {
-    request
-      .get(url)
-      .end((err, res) => { err ? reject(err) : resolve(res.body) })
-  }).catch(error)
+  const route = opts.url || ['api', model, 'query'].join('/')
+  const send = opts
+  logger.log('readMany()', send)
+  return action(route, 'post', send)
 }
 
 export function update (model, data, opts = {}) {
-  const url = opts.url || [config.host, model, data.id].join('/')
-  return new Promise((resolve, reject) => {
-    request
-      .put(url)
-      .send(data)
-      .end((err, res) => { err ? reject(err) : resolve(res.body) })
-  }).catch(error)
+  const route = opts.url || ['api', model, data.id].join('/')
+  const send = Object.assign({}, opts, { data: { model: data } })
+  logger.log('update()', send)
+  return action(route, 'patch', send)
 }
 
 export function destroy (model, id, opts = {}) {
-  const url = opts.url || [config.host, model, id].join('/')
-  return new Promise((resolve, reject) => {
-    request
-      .delete(url)
-      .end((err, res) => { err ? reject(err) : resolve(res.body) })
-  }).catch(error)
+  const route = opts.url || ['api', model, id].join('/')
+  logger.log('destroy()', id)
+  return action(route, 'delete')
 }
 
 export function action (route, method = 'get', opts = {}) {
-  // todo: consider implementings opts (eg to post data)
-  const url = opts.url || [config.host, route].join('/')
+  logger.log('action()', route, method, opts)
+  const url = [config.host, route].join('/')
   return new Promise((resolve, reject) => {
     request[method](url)
+      .query(opts.query)
       .send(opts.data)
       .end((err, res) => { err ? reject(err) : resolve(res.body) })
   }).catch(error)

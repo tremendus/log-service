@@ -1,17 +1,17 @@
 <script>
-import * as store from '../../services/store'
+import { readMany } from '../../services/store'
 
 const vue = {
   name: 'UsersIndex',
   data () {
     return {
-      users: []
+      collection: []
     }
   },
   route: {
     data () {
       return {
-        users: store.readMany('users')
+        collection: readMany('user')
       }
     }
   }
@@ -32,10 +32,10 @@ export default vue
               th Email
               th Level
           tbody
-            tr(v-for='user in users')
+            tr(v-for='model in collection')
               td
-                a(v-link='{ name: "users/view", params: { userId: user.id } }', v-text='user.name')
-              td {{ user.email }}
-              td {{ user.is_admin ? 'Admin' : 'User' }}
+                a(v-link='{ name: "users/view", params: { userId: model.id } }', v-text='model.name')
+              td {{ model.email }}
+              td {{ model.is_admin ? 'Admin' : 'User' }}
         a.btn.btn-primary(v-link='{ name: "users/add" }') Add User
 </template>
