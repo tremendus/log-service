@@ -1,6 +1,6 @@
 {
   "name": "log-service",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "General use ES6 logger, intended for VueJS apps",
   "main": "lib/index.js",
   "scripts": {
@@ -15,5 +15,10 @@
     "logger"
   ],
   "author": "Darren Carter",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "babel-cli": "^6.7.7",
+    "babel-polyfill": "^6.7.4",
+    "babel-preset-es2015": "^6.6.0"
+  }
 }
