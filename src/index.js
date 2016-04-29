@@ -56,4 +56,4 @@ Log.prototype.event = function (event, data) {
   this.output('log', ['%c' + event, 'color: ' + color, data])
 }
 
-module.exports = Log
+export default Log

@@ -2,7 +2,7 @@
   "name": "log-service",
   "version": "0.0.2",
   "description": "General use ES6 logger, intended for VueJS apps",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
