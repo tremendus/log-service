@@ -1,14 +1,14 @@
 {
-  "name": "tremendus-es6-logger",
-  "version": "1.0.0",
-  "description": "General use ES6 logger",
+  "name": "log-service",
+  "version": "0.0.1",
+  "description": "General use ES6 logger, intended for VueJS apps",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tremendus/tremendus-es6-logger.git"
+    "url": "https://github.com/tremendus/log-service.git"
   },
   "keywords": [
     "es6",
