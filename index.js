@@ -7,8 +7,6 @@ const Log = function (options = {}) {
 
 Log.prototype.output = function (level, args) {
   if (this.label) {
-    // console.log('args', typeof args, args)
-    // args.unshift(this.label)
     args = (arguments.length === 1 ? [args[0]] : Array.apply(null, args))
     args.unshift('[' + this.label + ']')
   }
@@ -16,12 +14,6 @@ Log.prototype.output = function (level, args) {
   if (!this.silent && this.console && console) {
     var fn = console[level]
     fn.apply(console, args)
-  }
-
-  if (!this.silent && this.remote && typeof this.export === 'function') {
-    // todo - insert remote logging
-    // var fn = console[level]
-    // fn.apply(console, args)
   }
 }
 
@@ -64,4 +56,4 @@ Log.prototype.event = function (event, data) {
   this.output('log', ['%c' + event, 'color: ' + color, data])
 }
 
-export default Log
+module.exports = Log
