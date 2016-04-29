@@ -1,6 +1,6 @@
 {
   "name": "log-service",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "General use ES6 logger, intended for VueJS apps",
   "main": "index.js",
   "scripts": {
