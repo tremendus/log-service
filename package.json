@@ -1,0 +1,19 @@
+{
+  "name": "tremendus-es6-logger",
+  "version": "1.0.0",
+  "description": "General use ES6 logger",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.org/tremendus/tremendus-es6-logger"
+  },
+  "keywords": [
+    "es6",
+    "logger"
+  ],
+  "author": "Darren Carter",
+  "license": "UNLICENSED"
+}
