@@ -2,7 +2,7 @@
 // todo: clear logs
 // todo: download all at once
 
-import { action } from '../../services/store'
+import { action } from 'restful-service'
 import config from '../../configuration/adapter'
 
 const vue = {
@@ -57,7 +57,7 @@ export default vue
           tbody
             tr(v-for='log in logs')
               td
-                a(:href='path(log.url)', target='_blank'){{ log.file }}
+                a(:href='path(log.url)', target='_blank') {{ log.file }}
               td.text-right {{ log.stats.size }}
               td.text-right {{ log.stats.atime }}
 </template>

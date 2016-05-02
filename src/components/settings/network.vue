@@ -1,5 +1,5 @@
 <script>
-import * as adapter from '../../services/store'
+import { action, update } from 'restful-service'
 
 const vue = {
   name: 'SettingsNetwork',
@@ -11,13 +11,13 @@ const vue = {
   route: {
     data () {
       return {
-        network: adapter.action('settings/read-network')
+        network: action('settings/read-network')
       }
     }
   },
   methods: {
     update () {
-      adapter.update(null, this.network, { url: 'settings/write-network' })
+      update(null, this.network, { url: 'settings/write-network' })
     }
   }
 }

@@ -1,6 +1,6 @@
 <script>
 /* eslint-disable */
-import * as store from '../../services/store'
+import * as store from 'restful-service'
 
 const vue = {
   name: 'DevelopMeters',

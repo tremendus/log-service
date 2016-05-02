@@ -1,5 +1,5 @@
 <script>
-import { create } from '../../services/store'
+import { create } from 'restful-service'
 import userForm from './form'
 
 const vue = {

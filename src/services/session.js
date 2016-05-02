@@ -1,7 +1,7 @@
 /* global localStorage */
 
-import LogService from './log'
-import { action } from './adapter'
+import LogService from 'log-service'
+import { action } from 'restful-service'
 import EventEmitter from 'events'
 import config from '../configuration/session'
 // import state from './state'

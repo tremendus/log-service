@@ -1,5 +1,5 @@
 <script>
-import { action } from '../../services/store'
+import { action } from 'restful-service'
 
 const vue = {
   name: 'SystemInfo',

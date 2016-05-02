@@ -1,5 +1,5 @@
 <script>
-import { readOne } from '../../services/store'
+import { readOne } from 'restful-service'
 
 const vue = {
   name: 'DevicesView',

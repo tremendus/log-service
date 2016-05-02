@@ -1,5 +1,5 @@
 <script>
-import LogService from '../../services/log'
+import LogService from 'log-service'
 import session from '../../services/session'
 
 const logger = new LogService({ label: 'login/index', silent: 0 })

@@ -36,6 +36,20 @@ module.exports = {
           }
         }
       },
+      '/device-models': {
+        name: 'device-models',
+        component: {
+          name: 'DeviceModels',
+          template: '<div id="#device-models"><router-view /></div>'
+        },
+        subRoutes: {
+          '/add': {
+            name: 'device-models/add',
+            component: require('../components/device-models/add')
+          }
+        }
+      },
+
       // todo: move to settings?
       '/users': {
         name: 'users',

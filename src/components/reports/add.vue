@@ -1,6 +1,6 @@
 <script>
 // todo: what if no device definitions
-import { readOne, readMany } from '../../services/store'
+import { readOne, readMany } from 'restful-service'
 
 const vue = {
   name: 'ReportsAdd',

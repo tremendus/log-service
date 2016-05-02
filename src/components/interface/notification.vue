@@ -1,7 +1,7 @@
 <script>
 // todo: clean this up to es6
 /* eslint-disable */
-import LogService from '../../services/log'
+import LogService from 'log-service'
 
 const logger = new LogService({ label: 'notification', silent: 0 })
 

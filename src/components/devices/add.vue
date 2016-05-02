@@ -1,5 +1,5 @@
 <script>
-import { readMany, create } from '../../services/store'
+import { readMany, create } from 'restful-service'
 
 const vue = {
   name: 'DevicesAdd',
