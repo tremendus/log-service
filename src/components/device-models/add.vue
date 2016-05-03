@@ -1,5 +1,9 @@
 <script>
+/* eslint-disable */
 // import DeviceRegister from './elements/device-register'
+
+import { action, create } from 'restful-service'
+
 const vue = {
   name: 'DeviceModelAdd',
   // components: { DeviceRegister },
@@ -24,12 +28,28 @@ const vue = {
         invalidValueEnabled: false,
         invalidValue: null
       },
-      registers: [],
-      definition: {
+      device_model: {
         label: null,
-        meta: []
+        device_class_id: 1,  // todo: reserve for custom devices?
+        device_definition_id: null, // assigned on save
+        factory: 0,
+        meta: {
+          protocols: {
+            modbus: {
+              tcp: false,
+              rtu: false
+            }
+          }
+        }
+      },
+      device_definition: {
+        label: null,
+        meta: {
+          registers: []
+        }
       },
       selected: 0,
+      registers: [],
       tabs: [{
         code: 'upload',
         label: 'Upload'
@@ -52,12 +72,15 @@ const vue = {
     this.append()
   },
   methods: {
-    select (dir) {
+    next (dir) {
       if (dir && this.selected < this.registers.length - 1) {
         this.selected += 1
       } else if (!dir && this.selected > 0) {
         this.selected -= 1
       }
+    },
+    select (i) {
+      this.selected = i
     },
     append () {
       // todo: clone w/ reset register, or clean new
@@ -75,12 +98,49 @@ const vue = {
         this.append()
       }
     },
+    upload () {
+      const file = document.getElementById('upload').files[0]
+      const reader = new FileReader()
+      reader.onload = this.process.bind(this)
+      // todo: proper error handling
+      reader.onerror = console.error
+      reader.readAsText(file)
+    },
+    process (event) {
+      console.log('process()', event)
+      const definition = event.target.result
+      action('import/upload', 'post', { data: { definition } })
+        .then((result) => {
+          console.log('result', result)
+          const sorted = result.sort((a, b) => {
+            if (a.label < b.label) return -1
+            if (a.label > b.label) return 1
+            return 0
+          })
+          this.registers = sorted
+        })
+    },
     isTab (tab) {
       console.log('isTab', tab, this.selectedTab)
       return tab === this.selectedTab
     },
     selectTab (tab) {
       this.selectedTab = tab
+    },
+    save () {
+      // reference the current registers object
+      this.device_definition.meta.registers = this.registers
+      const data = {
+        device_model: this.device_model,
+        device_definition: this.device_definition
+      }
+      console.log('save()', data)
+      action('device-models', 'post', { data })
+    }
+  },
+  watch: {
+    'device_model.label' (val) {
+      this.device_definition.label = val + ' Definition'
     }
   }
 }
@@ -93,8 +153,8 @@ export default vue
 
   form.form
     .form-group
-      label Model Label
-      input.form-control(type='text', v-model='definition.label')
+      label Device Model
+      input.form-control(type='text', v-model='device_model.label')
       span.help-block Try to use a concise accurate and complete model of your device eg. Acuvim-IIR-60-5A-P1
 
     .form-group
@@ -109,9 +169,9 @@ export default vue
         .panel-title Add Registers ({{ selected + 1 }} of {{ registers.length }})
       .panel-body
         .btn-group
-          .btn.btn-default(@click.stop.prevent='select(false)')
+          .btn.btn-default(@click.stop.prevent='next(false)')
             span.glyphicon.glyphicon-chevron-left
-          .btn.btn-default(@click.stop.prevent='select(true)')
+          .btn.btn-default(@click.stop.prevent='next(true)')
             span.glyphicon.glyphicon-chevron-right
         .row
           .col-xs-4
@@ -135,25 +195,25 @@ export default vue
             .form-group
               label Data Type
               select.form-control(v-model='reg.dataType')
-                option(selected) Select one
-                option(value='0') UINT16
-                option(value='1') INT16
-                option(value='2') UINT32
-                option(value='3') INT32
-                option(value='4') Float32
-                option(value='5') Mod 10k (4 registers)
-                option(value='6') Mod 10k (3 registers)
-                option(value='7') Mod 10k (2 registers)
-                option(value='8') Mod 1k (4 registers)
-                option(value='9') Mod 1k (3 registers)
-                option(value='10') Mod 1k (2 registers)
-                option(value='11') HEX 16
+                option(value=) Select one
+                option(value=0) UINT16
+                option(value=1) INT16
+                option(value=2) UINT32
+                option(value=3) INT32
+                option(value=4) Float32
+                option(value=5) Mod 10k (4 registers)
+                option(value=6) Mod 10k (3 registers)
+                option(value=7) Mod 10k (2 registers)
+                option(value=8) Mod 1k (4 registers)
+                option(value=9) Mod 1k (3 registers)
+                option(value=10) Mod 1k (2 registers)
+                option(value=11) HEX 16
               //- input.form-control(type='text', v-model='reg.dataType')
           .col-xs-4
             .form-group
               label Function
               select.form-control(v-model='reg.function')
-                option(selected) Select one
+                option(value=) Select one
                 option(value=1) Read Coil
                 option(value=3) Read Input Register
                 option(value=4) Read Holding Register
@@ -176,10 +236,10 @@ export default vue
           .col-xs-4
             .form-group
               label
-                input(type='checkbox', v-model='reg.multiRegEnabled', value=true)
-                | &nbsp; Enable Multiplier
-              .div(v-if='reg.multiRegEnabled')
-                input.form-control(type='text', v-model='reg.multiReg')
+                input(type='checkbox', v-model='reg.multiplierRegisterEnabled', value=true)
+                | &nbsp; Enable Multiplier Register
+              .div(v-if='reg.multiplierRegisterEnabled')
+                input.form-control(type='text', v-model='reg.multiplierRegister')
         .row
           .col-xs-4
             .form-group
@@ -198,7 +258,15 @@ export default vue
 
         button.btn.btn-primary(@click.prevent.stop='append') Add
 
-  debug(:debug='registers')
+    .panel.panel-default(v-if='isTab("upload")')
+      .panel-heading
+        .panel-title Upload
+      .panel-body
+        .form-group
+          label File
+          input#upload.form-control(type='file')
+        .form-group.btn-group
+          a.btn.btn-primary(@click='upload') Upload
 
   .table-responsive(v-if='true')
     table.table.table-condensed.table-striped
@@ -219,7 +287,8 @@ export default vue
       tbody
         //- tr(is='device-register', v-for='register in registers', :register='register')
         tr(v-for='(i, model) in registers')
-          td {{ model.label }}
+          td
+            a(href='javascript:;', @click='select(i)') {{ model.label }}
           td {{ model.abbreviation }}
           td {{ model.units }}
           td {{ model.register }}
@@ -227,9 +296,14 @@ export default vue
           td {{ model.function }}
           td {{ model.slope }}
           td {{ model.offset }}
-          td {{ model.multiReg }}
+          td {{ model.multiplierRegister }}
           td {{ model.scale }}
           td {{ model.invalidValue }}
           td
             button.btn.btn-sm.btn-danger(@click.stop.prevent='remove(i)') Remove
+  .form-group
+    button.btn.btn-primary(@click.stop.prevent='save') Save
+
+  //- debug(:debug='registers')
+
 </template>
