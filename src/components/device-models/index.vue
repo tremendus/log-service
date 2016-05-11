@@ -2,19 +2,16 @@
 import { readMany } from 'restful-service'
 
 const vue = {
-  name: 'DevicesIndex',
+  name: 'DeviceModelsIndex',
   data () {
     return {
-      query: {
-        related: ['device_model']
-      },
       collection: []
     }
   },
   route: {
     data () {
       return {
-        collection: readMany('devices', this.query)
+        collection: readMany('device_models')
       }
     }
   }
@@ -29,16 +26,14 @@ export default vue
     .row
       .col-xs-12(v-if='!$loadingRouteData')
         h3
-          a.btn.btn-primary.pull-right(v-link='{ name: "devices/add" }') Add
-          | Devices
+          a.btn.btn-primary.pull-right(v-link='{ name: "device-models/add" }') Add
+          | Device Models
         table.table.table-bordered.table-striped
           thead
             tr
-              th Device Label
               th Device Model
           tbody
             tr(v-for='model in collection')
               td
-                a(v-link='{ name: "devices/view", params: { deviceId: model.id } }', v-text='model.label')
-              td {{ model.device_model.label }}
+                a(v-link='{ name: "device-models/view", params: { deviceModelId: model.id } }', v-text='model.label')
 </template>

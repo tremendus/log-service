@@ -44,7 +44,7 @@ export default vue
                   input(type='checkbox', xv-model='network.en[0][1].dhcp')
                   | Use DHCP
               //- todo: div if !UPnP && !DHCP
-              .form-groups
+              .form-group
                 label IP Address
                 input.form-control(type='text', v-model='network.en0[1].address')
               .form-group
@@ -65,7 +65,7 @@ export default vue
               .form-group
                 label Ethernet MTU
                 input.form-control(type='text', xv-model='network.en[0][1].mtu')
-              .form-groups
+              .form-group
                 label Proxy Address
                 input.form-control(type='text', xv-model='network.en[0][1].proxy_address')
               .form-group

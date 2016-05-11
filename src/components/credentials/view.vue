@@ -2,29 +2,26 @@
 import { readOne } from 'restful-service'
 
 const vue = {
-  name: 'DevicesView',
+  name: 'CredentialsView',
   data () {
     return {
-      query: {
-        related: ['device_model']
-      },
+      query: {},
       model: []
     }
   },
   route: {
     data () {
       return {
-        model: readOne('devices', this.$route.params.deviceId, this.query)
+        model: readOne('credentials', this.$route.params.credentialId, this.query)
       }
     }
   }
 }
-
 export default vue
 </script>
 
 <template lang="jade">
-#devices-view
+#credentials-view
   .container-fluid
     .row
       .col-xs-12(v-if='!$loadingRouteData')

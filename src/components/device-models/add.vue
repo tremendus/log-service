@@ -1,16 +1,18 @@
 <script>
 /* eslint-disable */
-// import DeviceRegister from './elements/device-register'
 
 import { action, create } from 'restful-service'
+import { component as TabComponent, mixin as TabMixin } from '../../plugins/tabs'
 
 const vue = {
   name: 'DeviceModelAdd',
-  // components: { DeviceRegister },
+  components: { TabComponent },
+  mixins: [TabMixin],
   data () {
     return {
       register: {
-        parameter_id: null,
+        // remove factory alignment for now
+        // parameter_id: null,
         label: null,
         abbreviation: null,
         units: null,
@@ -45,27 +47,28 @@ const vue = {
       device_definition: {
         label: null,
         meta: {
-          registers: []
+          params: []
         }
       },
+      parameters: [],
       selected: 0,
-      registers: [],
+      params: [],
       tabs: [{
-        code: 'upload',
-        label: 'Upload'
-      }, {
         code: 'custom',
         label: 'Build'
+      }, {
+        code: 'upload',
+        label: 'Upload'
       }],
-      selectedTab: 'build'
+      selectedTab: 'custom'
     }
   },
   computed: {
     reg () {
-      if (!this.registers[this.selected]) {
+      if (!this.params[this.selected]) {
         return {}
       }
-      return this.registers[this.selected]
+      return this.params[this.selected]
     }
   },
   created () {
@@ -73,7 +76,7 @@ const vue = {
   },
   methods: {
     next (dir) {
-      if (dir && this.selected < this.registers.length - 1) {
+      if (dir && this.selected < this.params.length - 1) {
         this.selected += 1
       } else if (!dir && this.selected > 0) {
         this.selected -= 1
@@ -85,16 +88,16 @@ const vue = {
     append () {
       // todo: clone w/ reset register, or clean new
       const add = Object.assign({}, this.register)
-      this.registers.push(add)
-      this.selected = this.registers.length - 1
+      this.params.push(add)
+      this.selected = this.params.length - 1
     },
     remove (i) {
       // console.log('remove()', i)
       if (this.selected >= i) {
         this.select(false)
       }
-      this.registers.splice(i, 1)
-      if (this.registers.length === 0) {
+      this.params.splice(i, 1)
+      if (this.params.length === 0) {
         this.append()
       }
     },
@@ -117,25 +120,25 @@ const vue = {
             if (a.label > b.label) return 1
             return 0
           })
-          this.registers = sorted
+          this.params = sorted
         })
     },
-    isTab (tab) {
-      console.log('isTab', tab, this.selectedTab)
-      return tab === this.selectedTab
-    },
-    selectTab (tab) {
-      this.selectedTab = tab
-    },
     save () {
-      // reference the current registers object
-      this.device_definition.meta.registers = this.registers
+      // reference the current params object
+      this.device_definition.meta.params = this.params
       const data = {
         device_model: this.device_model,
         device_definition: this.device_definition
       }
       console.log('save()', data)
       action('device-models', 'post', { data })
+    }
+  },
+  route: {
+    data () {
+      return {
+        parameters: action('api/parameters')
+      }
     }
   },
   watch: {
@@ -158,15 +161,11 @@ export default vue
       span.help-block Try to use a concise accurate and complete model of your device eg. Acuvim-IIR-60-5A-P1
 
     .form-group
-      .nav.nav-pills
-        li(:class='{ "active" : isTab("build") }')
-          a(href='javascript;', @click.stop.prevent='selectTab("build")') Build
-        li(:class='{ "active" : isTab("upload") }')
-          a(href='javascript;', @click.stop.prevent='selectTab("upload")') Upload
+      tab-component(class='nav nav-pills', :tabs.sync='tabs', :selected-tab.sync='selectedTab')
 
-    .panel.panel-default(v-if='isTab("build")')
+    .panel.panel-default(v-if='isTab("custom")')
       .panel-heading
-        .panel-title Add Registers ({{ selected + 1 }} of {{ registers.length }})
+        .panel-title Add Registers ({{ selected + 1 }} of {{ params.length }})
       .panel-body
         .btn-group
           .btn.btn-default(@click.stop.prevent='next(false)')
@@ -255,6 +254,15 @@ export default vue
                 | &nbsp; Enable Invalid Value
               .div(v-if='reg.invalidValueEnabled')
                 input.form-control(type='text', v-model='reg.invalidValue')
+        
+        // remove factory alignment for now
+        //- .row
+        //-   .col-xs-4
+        //-     .form-group
+        //-       label Align Parameter
+        //-       select.form-control(v-model='reg.parameter_id')
+        //-         option(value=) Select one
+        //-         option(v-for='parameter in parameters', :value='parameter.id') {{ parameter.label }}
 
         button.btn.btn-primary(@click.prevent.stop='append') Add
 
@@ -273,6 +281,7 @@ export default vue
       thead
         tr
           th Parameter
+          //- th Factory Parameter
           th Abbreviation
           th Units
           th Register
@@ -285,11 +294,12 @@ export default vue
           th Invalid Value
           th Remove?
       tbody
-        //- tr(is='device-register', v-for='register in registers', :register='register')
-        tr(v-for='(i, model) in registers')
+        //- tr(is='device-register', v-for='register in params', :register='register')
+        tr(v-for='(i, model) in params')
           td
             a(href='javascript:;', @click='select(i)') {{ model.label }}
-          td {{ model.abbreviation }}
+          td {{ model.parameter_id }}
+          //- td {{ model.abbreviation }}
           td {{ model.units }}
           td {{ model.register }}
           td {{ model.dataType }}
@@ -301,9 +311,10 @@ export default vue
           td {{ model.invalidValue }}
           td
             button.btn.btn-sm.btn-danger(@click.stop.prevent='remove(i)') Remove
+
   .form-group
     button.btn.btn-primary(@click.stop.prevent='save') Save
 
-  //- debug(:debug='registers')
+  //- debug(:debug='params')
 
 </template>

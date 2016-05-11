@@ -1,0 +1,1 @@
+/Users/tremendus/Development/Tremendus/adonis-vue-platform/restful-service/src/index.js

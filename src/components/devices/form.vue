@@ -1,0 +1,87 @@
+<script>
+import { readMany } from 'restful-service'
+
+const vue = {
+  name: 'DevicesForm',
+  props: ['device'],
+  data () {
+    return {
+      deviceModels: [],
+      useProtocol: 'tcp'
+    }
+  },
+  computed: {
+    sortedDeviceModels () {
+      const deviceModels = Object.assign([], this.deviceModels)
+      deviceModels.unshift({ id: '', label: 'Choose the model of your device' })
+      return deviceModels
+    }
+  },
+  created () {
+    readMany('device_models')
+      .then((collection) => {
+        this.deviceModels = collection
+      })
+  },
+  methods: {
+    action () {
+      this.$emit('action')
+    }
+  }
+}
+
+export default vue
+</script>
+
+<template lang="jade">
+#devices-form
+  .panel.panel-default
+      .panel-heading
+        .panel-title Device Details
+      .panel-body
+        form.form
+          .form-group
+            label Label
+            input.form-control(type='text', v-model='device.label')
+          .form-group
+            label Model
+            select.form-control(v-model='device.device_model_id')
+              option(v-for='model in sortedDeviceModels', :value='model.id', v-text='model.label')
+          label.checkbox-inline
+            input(type='radio', v-model='useProtocol', value='tcp')
+            | &nbsp; TCP
+          label.checkbox-inline
+            input(type='radio', v-model='useProtocol', value='rtu')
+            | &nbsp; RTU
+
+      .panel-body(v-if='useProtocol === "tcp"')
+        .form-group
+          label IP Address
+          input.form-control(type='text', v-model='device.meta.protocols.modbus.tcp.ip')
+        .form-group
+          label Port
+          input.form-control(type='text', v-model='device.meta.protocols.modbus.tcp.port')
+
+      .panel-body(v-if='useProtocol === "rtu"')
+        .form-group
+          label Device
+          input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.device')
+        .form-group
+          label Port
+          input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.port')
+        .form-group
+          label Baud
+          input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.baud')
+        .form-group
+          label Data Bit
+          input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.dataBit')
+        .form-group
+          label Parity
+          input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.parity')
+        .form-group
+          label Stop Bit
+          input.form-control(type='text', v-model='device.meta.protocols.modbus.rtu.stopBit')
+
+      .panel-footer
+        button.btn.btn-primary(@click.stop.prevent='action') Save
+</template>

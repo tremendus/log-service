@@ -10,6 +10,10 @@ export default {
         list: {
           label: 'List Devices',
           route: { name: 'devices/index' }
+        },
+        list_models: {
+          label: 'Device Models',
+          route: { name: 'device-models/index' }
         }
       }
     },
@@ -22,16 +26,16 @@ export default {
         },
         reports: {
           label: 'Reports',
-          route: { name: 'no-route' }
+          route: { name: 'reports/index' }
         },
         reports_add: {
           label: 'Reports Add',
           route: { name: 'reports/add' }
-        },
-        templates: {
-          label: 'Templates',
-          route: { name: 'no-route' }
         }
+        // templates: {
+        //   label: 'Templates',
+        //   route: { name: 'no-route' }
+        // }
       }
     },
     settings: {
@@ -53,6 +57,10 @@ export default {
         storage: {
           label: 'Storage',
           route: { name: 'no-route' }
+        },
+        exports: {
+          label: 'Export Profiles',
+          route: { name: 'credentials/index' }
         }
       }
     },

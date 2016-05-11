@@ -33,6 +33,10 @@ module.exports = {
           '/add': {
             name: 'devices/add',
             component: require('../components/devices/add')
+          },
+          '/edit/:deviceId': {
+            name: 'devices/edit',
+            component: require('../components/devices/edit')
           }
         }
       },
@@ -43,6 +47,14 @@ module.exports = {
           template: '<div id="#device-models"><router-view /></div>'
         },
         subRoutes: {
+          '/': {
+            name: 'device-models/index',
+            component: require('../components/device-models/index')
+          },
+          '/view/:deviceModelId': {
+            name: 'device-models/view',
+            component: require('../components/device-models/view')
+          },
           '/add': {
             name: 'device-models/add',
             component: require('../components/device-models/add')
@@ -121,12 +133,50 @@ module.exports = {
           template: '<div id="#reports"><router-view /></div>'
         },
         subRoutes: {
+          '/': {
+            name: 'reports/index',
+            component: require('../components/reports/index')
+          },
+          '/view/:reportId': {
+            name: 'reports/view',
+            component: require('../components/reports/view')
+          },
+          '/edit/:reportId': {
+            name: 'reports/edit',
+            component: require('../components/reports/edit')
+          },
           '/add': {
             name: 'reports/add',
             component: require('../components/reports/add')
           }
         }
       },
+      '/credentials': {
+        name: 'credentials',
+        component: {
+          name: 'credentials',
+          template: '<div id="#credentials"><router-view /></div>'
+        },
+        subRoutes: {
+          '/': {
+            name: 'credentials/index',
+            component: require('../components/credentials/index')
+          },
+          '/view/:credentialId': {
+            name: 'credentials/view',
+            component: require('../components/credentials/view')
+          },
+          '/edit/:credentialId': {
+            name: 'credentials/edit',
+            component: require('../components/credentials/edit')
+          },
+          '/add': {
+            name: 'credentials/add',
+            component: require('../components/credentials/add')
+          }
+        }
+      },
+
       // no route
       'no-route': {
         name: 'no-route',
