@@ -1,5 +1,3 @@
-// import Vue from 'vue' // eslint-disable-line no-unused-vars
-
 const template = `
 <div>
   <li v-for='tab in tabs' :class='{ "active" : isTab(tab.code) }'>

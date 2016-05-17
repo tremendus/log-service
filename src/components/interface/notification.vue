@@ -26,6 +26,10 @@ vue.data = function () {
 	}
 }
 
+vue.computed.alertLevel = function () {
+	return 'alert-' + this.level
+}
+
 vue.methods.notify = function (options) {
 	if (this.isNotifying && options.sticky !== true) {
 		return false
@@ -34,7 +38,7 @@ vue.methods.notify = function (options) {
 	this.message = options.message
 	this.level = options.level
 	this.sticky = options.sticky
-	$(this.$el).animate({'top':'0px'})
+	$(this.$el).animate({top: '0px'})
 	if (options.sticky !== true) {
 		this.$options.notifyInterval = setTimeout(this.clear, 3000)
 	}
@@ -60,41 +64,26 @@ vue.events['notification:clear'] = function () {
 	this.clear()
 }
 
-vue.events['connection:up'] = function () {
-	logger.event('connection:up')
-	this.clear()
-}
-
-vue.events['connection:down'] = function (options) {
-	var options = {
-		level: 'danger',
-		message: 'Cannot connect to the Ethernet module.',
-		sticky: true
-	}
-	logger.event('connection:down', options)
-	this.notify(options)
-}
-
 export default vue
 </script>
 
 <template lang="jade">
 #ui-notification
-	.ui.visible.message(v-bind:class='level')
-		i.close.icon(v-if='sticky', @click='clear')
-		.header {{message}}
+	div.alert.inverse(v-bind:class='alertLevel')
+		b {{message}}
+	//- div: code interface/footer.vue
 </template>
 
 <style lang="stylus">
 #ui-notification
 	position fixed
-	z-index 10000
+	z-index 100
 	left 0
 	right 0
 	top -60px
-	/*height 60px*/
+	height 60px
 	&.shown
 		top 0px
-	& .message
-		/*min-height 60px*/
+	& .notification
+		min-height 60px
 </style>

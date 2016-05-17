@@ -5,6 +5,10 @@ module.exports = {
     name: 'adapter',
     component: require('../components/develop/adapter')
   },
+  '/form': {
+    name: 'form',
+    component: require('../components/develop/form')
+  },
 
   // application routes
   '/gateway': {

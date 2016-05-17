@@ -1,7 +1,7 @@
 <script>
 /* eslint-disable */
-
-import { action, create } from 'restful-service'
+import Vue from 'vue'
+import { readMany, action, create } from 'restful-service'
 import { component as TabComponent, mixin as TabMixin } from '../../plugins/tabs'
 
 const vue = {
@@ -10,9 +10,11 @@ const vue = {
   mixins: [TabMixin],
   data () {
     return {
+      id: 0,
       register: {
         // remove factory alignment for now
         // parameter_id: null,
+        id: null,
         label: null,
         abbreviation: null,
         units: null,
@@ -78,18 +80,40 @@ const vue = {
     next (dir) {
       if (dir && this.selected < this.params.length - 1) {
         this.selected += 1
+        Vue.nextTick(() => {
+          this.$validate()
+        })
       } else if (!dir && this.selected > 0) {
         this.selected -= 1
+        Vue.nextTick(() => {
+          this.$validate()
+        })
       }
     },
     select (i) {
       this.selected = i
+      Vue.nextTick(() => {
+        this.$validate()
+      })
     },
     append () {
       // todo: clone w/ reset register, or clean new
       const add = Object.assign({}, this.register)
       this.params.push(add)
       this.selected = this.params.length - 1
+    },
+    doIfValid (cb, v) {
+      this.$validate()
+      if (this.$form.valid) {
+        // this.append()
+        cb.call(this, v)
+      } else {
+        const opts = {
+          level: 'warning',
+          message: 'Please check form fields. All fields must be valid before continuing.'
+        }
+        this.$root.$broadcast('notification:show', opts)
+      }
     },
     remove (i) {
       // console.log('remove()', i)
@@ -126,18 +150,39 @@ const vue = {
     save () {
       // reference the current params object
       this.device_definition.meta.params = this.params
+      // map the index to arbitrary id
+      this.params.map((p, i) => p.id = i)
+      // return
       const data = {
         device_model: this.device_model,
         device_definition: this.device_definition
       }
       console.log('save()', data)
+      // todo: fixme: replace with model create api
       action('device-models', 'post', { data })
+        .then((result) => {
+          console.log('save():action:result', result)
+          const opts = {
+            level: 'success',
+            message: 'Your device was successfully created'
+          }
+          this.$root.$broadcast('notfication:show', opts)
+          setTimeout(this.$router.go({ name: 'device-models/index' }), 2000)
+        })
+        .catch((error) => {
+          const opts = {
+            level: 'danger',
+            // todo: proper error messages: consider should this be handled at adapter or store, not here?
+            message: 'There was a problem saving your device. Try again, if the problem persists ... there is little you can do'
+          }
+          this.$root.$broadcast('notfication:show', opts)
+        })
     }
   },
   route: {
     data () {
       return {
-        parameters: action('api/parameters')
+        parameters: readMany('parameters')
       }
     }
   },
@@ -154,124 +199,131 @@ export default vue
 #device-model-add
   h3 Add Device Model
 
-  form.form
-    .form-group
-      label Device Model
-      input.form-control(type='text', v-model='device_model.label')
-      span.help-block Try to use a concise accurate and complete model of your device eg. Acuvim-IIR-60-5A-P1
+  debug(:debug='$form')
 
-    .form-group
-      tab-component(class='nav nav-pills', :tabs.sync='tabs', :selected-tab.sync='selectedTab')
+  validator(name='form', :classes="{ invalid: 'has-error' }")
+    form.form(novalidate)
+      .panel.panel-default
+        .panel-heading
+          .panel-title Model Details
+        .panel-body
+          .form-group(v-validate-class)
+            label.control-label Model Label
+            input.form-control(type='text', v-model='device_model.label', v-validate:device_model='["required"]', initial='off', detect-change='off')
+            span.help-block Try to use a concise accurate and complete model of your device eg. Acuvim-IIR-60-5A-P1
 
-    .panel.panel-default(v-if='isTab("custom")')
-      .panel-heading
-        .panel-title Add Registers ({{ selected + 1 }} of {{ params.length }})
-      .panel-body
-        .btn-group
-          .btn.btn-default(@click.stop.prevent='next(false)')
-            span.glyphicon.glyphicon-chevron-left
-          .btn.btn-default(@click.stop.prevent='next(true)')
-            span.glyphicon.glyphicon-chevron-right
-        .row
-          .col-xs-4
-            .form-group
-              label Parameter Name
-              input.form-control(type='text', v-model='reg.label')
-          .col-xs-4
-            .form-group
-              label Parameter Abbreviation
-              input.form-control(type='text', v-model='reg.abbreviation')
-          .col-xs-4
-            .form-group
-              label Parameter Units
-              input.form-control(type='text', v-model='reg.units')
-        .row
-          .col-xs-4
-            .form-group
-              label Register
-              input.form-control(type='text', v-model='reg.register')
-          .col-xs-4
-            .form-group
-              label Data Type
-              select.form-control(v-model='reg.dataType')
-                option(value=) Select one
-                option(value=0) UINT16
-                option(value=1) INT16
-                option(value=2) UINT32
-                option(value=3) INT32
-                option(value=4) Float32
-                option(value=5) Mod 10k (4 registers)
-                option(value=6) Mod 10k (3 registers)
-                option(value=7) Mod 10k (2 registers)
-                option(value=8) Mod 1k (4 registers)
-                option(value=9) Mod 1k (3 registers)
-                option(value=10) Mod 1k (2 registers)
-                option(value=11) HEX 16
-              //- input.form-control(type='text', v-model='reg.dataType')
-          .col-xs-4
-            .form-group
-              label Function
-              select.form-control(v-model='reg.function')
-                option(value=) Select one
-                option(value=1) Read Coil
-                option(value=3) Read Input Register
-                option(value=4) Read Holding Register
-              //- input.form-control(type='text', v-model='reg.function')
-        .row
-          .col-xs-4
-            .form-group
-              label
-                input(type='checkbox', v-model='reg.slopeEnabled', value=true)
-                | &nbsp; Enable Slope
-              .div(v-if='reg.slopeEnabled')
-                input.form-control(type='text', v-model='reg.slope')
-          .col-xs-4
-            .form-group
-              label
-                input(type='checkbox', v-model='reg.offsetEnabled', value=true)
-                | &nbsp; Enable Offset
-              .div(v-if='reg.offsetEnabled')
-                input.form-control(type='text', v-model='reg.offset')
-          .col-xs-4
-            .form-group
-              label
-                input(type='checkbox', v-model='reg.multiplierRegisterEnabled', value=true)
-                | &nbsp; Enable Multiplier Register
-              .div(v-if='reg.multiplierRegisterEnabled')
-                input.form-control(type='text', v-model='reg.multiplierRegister')
-        .row
-          .col-xs-4
-            .form-group
-              label
-                input(type='checkbox', v-model='reg.userScaleEnabled', value=true)
-                | &nbsp; Enable Scale
-              .div(v-if='reg.userScaleEnabled')
-                input.form-control(type='text', v-model='reg.userScale')
-          .col-xs-4
-            .form-group
-              label
-                input(type='checkbox', v-model='reg.invalidValueEnabled', value=true)
-                | &nbsp; Enable Invalid Value
-              .div(v-if='reg.invalidValueEnabled')
-                input.form-control(type='text', v-model='reg.invalidValue')
-        
-        // remove factory alignment for now
-        //- .row
-        //-   .col-xs-4
-        //-     .form-group
-        //-       label Align Parameter
-        //-       select.form-control(v-model='reg.parameter_id')
-        //-         option(value=) Select one
-        //-         option(v-for='parameter in parameters', :value='parameter.id') {{ parameter.label }}
+      .form-group
+        tab-component(class='nav nav-pills', :tabs.sync='tabs', :selected-tab.sync='selectedTab')
 
-        button.btn.btn-primary(@click.prevent.stop='append') Add
+      .panel.panel-default(v-if='isTab("custom")')
+        .panel-heading
+          .panel-title Add Registers ({{ selected + 1 }} of {{ params.length }})
+        .panel-body
+          .btn-group
+            .btn.btn-default(@click.stop.prevent='next(false)')
+              span.glyphicon.glyphicon-chevron-left
+            .btn.btn-default(@click.stop.prevent='next(true)')
+              span.glyphicon.glyphicon-chevron-right
+          .row
+            .col-xs-4
+              .form-group(v-validate-class)
+                label.control-label Parameter Name
+                input.form-control(type='text', v-model='reg.label', v-validate:label='["required"]', initial='off', detect-change='off')
+            .col-xs-4
+              .form-group(v-validate-class)
+                label.control-label Parameter Abbreviation
+                input.form-control(type='text', v-model='reg.abbreviation', v-validate:abbreviation='["required"]', initial='off', detect-change='off')
+            .col-xs-4
+              .form-group(v-validate-class)
+                label.control-label Parameter Units
+                input.form-control(type='text', v-model='reg.units', v-validate:units='["required"]', initial='off', detect-change='off')
+          .row
+            .col-xs-4
+              .form-group(v-validate-class)
+                label.control-label Register
+                input.form-control(type='text', v-model='reg.register', v-validate:register='["required"]', initial='off', detect-change='off')
+            .col-xs-4
+              .form-group(v-validate-class)
+                label.control-label Data Type
+                select.form-control(v-model='reg.dataType', v-validate:dataType='["required"]', initial='off', detect-change='off')
+                  option(value='') Select one
+                  option(value=0) UINT16
+                  option(value=1) INT16
+                  option(value=2) UINT32
+                  option(value=3) INT32
+                  option(value=4) Float32
+                  option(value=5) Mod 10k (4 registers)
+                  option(value=6) Mod 10k (3 registers)
+                  option(value=7) Mod 10k (2 registers)
+                  option(value=8) Mod 1k (4 registers)
+                  option(value=9) Mod 1k (3 registers)
+                  option(value=10) Mod 1k (2 registers)
+                  option(value=11) HEX 16
+                //- input.form-control(type='text', v-model='reg.dataType')
+            .col-xs-4
+              .form-group(v-validate-class)
+                label.control-label Function
+                select.form-control(v-model='reg.function', v-validate:function='["required"]', initial='off', detect-change='off')
+                  option(value='') Select one
+                  option(value=1) Read Coil
+                  option(value=3) Read Input Register
+                  option(value=4) Read Holding Register
+                //- input.form-control(type='text', v-model='reg.function')
+          .row
+            .col-xs-4
+              .form-group(v-validate-class)
+                label
+                  input(type='checkbox', v-model='reg.slopeEnabled', value=true)
+                  | &nbsp; Enable Slope
+                .div(v-if='reg.slopeEnabled')
+                  input.form-control(type='text', v-model='reg.slope')
+            .col-xs-4
+              .form-group(v-validate-class)
+                label
+                  input(type='checkbox', v-model='reg.offsetEnabled', value=true)
+                  | &nbsp; Enable Offset
+                .div(v-if='reg.offsetEnabled')
+                  input.form-control(type='text', v-model='reg.offset')
+            .col-xs-4
+              .form-group(v-validate-class)
+                label
+                  input(type='checkbox', v-model='reg.multiplierRegisterEnabled', value=true)
+                  | &nbsp; Enable Multiplier Register
+                .div(v-if='reg.multiplierRegisterEnabled')
+                  input.form-control(type='text', v-model='reg.multiplierRegister')
+          .row
+            .col-xs-4
+              .form-group
+                label
+                  input(type='checkbox', v-model='reg.userScaleEnabled', value=true)
+                  | &nbsp; Enable Scale
+                .div(v-if='reg.userScaleEnabled')
+                  input.form-control(type='text', v-model='reg.userScale')
+            .col-xs-4
+              .form-group
+                label
+                  input(type='checkbox', v-model='reg.invalidValueEnabled', value=true)
+                  | &nbsp; Enable Invalid Value
+                .div(v-if='reg.invalidValueEnabled')
+                  input.form-control(type='text', v-model='reg.invalidValue')
+          
+          // remove factory alignment for now
+          //- .row
+          //-   .col-xs-4
+          //-     .form-group
+          //-       label.control-label Align Parameter
+          //-       select.form-control(v-model='reg.parameter_id')
+          //-         option(value=) Select one
+          //-         option(v-for='parameter in parameters', :value='parameter.id') {{ parameter.label }}
+
+          button.btn.btn-primary(@click.prevent.stop='doIfValid(append)') Add
 
     .panel.panel-default(v-if='isTab("upload")')
       .panel-heading
         .panel-title Upload
       .panel-body
         .form-group
-          label File
+          label.control-label File
           input#upload.form-control(type='file')
         .form-group.btn-group
           a.btn.btn-primary(@click='upload') Upload
@@ -297,7 +349,7 @@ export default vue
         //- tr(is='device-register', v-for='register in params', :register='register')
         tr(v-for='(i, model) in params')
           td
-            a(href='javascript:;', @click='select(i)') {{ model.label }}
+            a(href='javascript:;', @click='select(i)') {{ model.label || 'None Set' }}
           td {{ model.parameter_id }}
           //- td {{ model.abbreviation }}
           td {{ model.units }}
@@ -313,7 +365,7 @@ export default vue
             button.btn.btn-sm.btn-danger(@click.stop.prevent='remove(i)') Remove
 
   .form-group
-    button.btn.btn-primary(@click.stop.prevent='save') Save
+    button.btn.btn-primary(@click.stop.prevent='doIfValid(save)') Save
 
   //- debug(:debug='params')
 

@@ -1,40 +1,36 @@
 <script>
 /* eslint-disable */
 import { readMany, action, create } from 'restful-service'
-import { component as TabComponent, mixin as TabMixin } from '../../plugins/tabs'
 
 const vue = {
   name: 'reports-add',
   props: ['tabs', 'selectedTab'],
-  components: { TabComponent },
-  mixins: [ TabMixin ],
   data () {
     return {
       report: {
         label: null,
-        type: 'logging',
         device_model_id: null,
         meta: {
           description: null,
-          params: []
+          params: [],
+          credentials: [],
+          schedule: {}
         }
       },
       devices: [],
       device_models: [],
       parameters: [],
-      reportParams: [],
       credentials: [],
-      tabs: [{
-        code: 'logging',
-        label: 'Logging'
-      }, {
-        code: 'threshold',
-        label: 'Threshold'
-      }, {
-        code: 'alarm',
-        label: 'Alarm'
-      }],
-      selectedTab: 'logging',
+      intervals: [
+        { label: '1 minute', value: 1 },
+        { label: '5 minutes', value: 5 },
+        { label: '10 minutes', value: 10 },
+        { label: '15 minutes', value: 15 },
+        { label: '20 minutes', value: 20 },
+        { label: '30 minutes', value: 30 },
+        { label: '60 minutes', value: 60 },
+        { label: '24 hours', value: 60*24 },
+      ],
       query: {
         devices: {
           orderBy: {
@@ -56,14 +52,9 @@ const vue = {
     filteredDevices () {
       return this.devices.filter((d) => d.device_model_id === this.report.device_model_id)
     },
-    // sortedDevices (arr) {
-    //   const sorted = arr.sort((a, b) => {
-    //     if (a.label < b.label) return -1
-    //     if (a.label > b.label) return 1
-    //     return 0
-    //   })
-    //   return sorted
-    // },
+    isSelectedDevices () {
+      return this.devices.filter((d) => d._selected === true).length > 0
+    },
     deviceParams () {
       const deviceId = this.report.device_model_id
       const device = this.device_models.find((d) => d.id === deviceId)
@@ -74,24 +65,11 @@ const vue = {
         if (a.label > b.label) return 1
         return 0
       })
-      // console.log('deviceParams', deviceId, device)
       return sorted
-      // return []
     },
-    // groupedParameters () {
-    //   console.log('')
-    //   const grouped = this.parameters.reduce((ps, p) => {
-    //     console.log('p', p)
-    //     let gp = ps[p.tab]
-    //     if (!gp) {
-    //       ps[p.tab] = gp = []
-    //     }
-    //     gp.push(p)
-    //     console.log('gps', p, ps)
-    //     return ps
-    //   }, {})
-    //   return grouped || []
-    // }
+    reportParams () {
+
+    }
   },
   route: {
     data () {
@@ -106,7 +84,11 @@ const vue = {
   },
   methods: {
     create () {
-      create
+      // create
+      const params = this.deviceParams.filter((p) => p._selected)
+      const creds = this.credentials.filter((c) => c._selected)
+      this.report.meta.params = params
+
     }
   }
 }
@@ -117,129 +99,133 @@ export default vue
 <template lang="jade">
 #reports-add
 
-  form.form
+  validator(name='form', :classes="{ invalid: 'has-error' }")
+    form.form(novalidate)
 
-    .panel.panel-default
-      .panel-heading
-        .panel-title New Report
-      .panel-body
-        .form-group
-          label Title
-          input.form-control(type='text', v-model='report.label')
-        .form-group
-          label Description
-          textarea.form-control {{ report.meta.description }}
-        .form-group
-          label Device Type
-          select.form-control(v-model='report.device_model_id')
-            option(value='') Select one
-            option(v-for='model in device_models', :value='model.id') {{model.label}}
-        .form-group
-          label Report Type
-          .radio
-            label
-              input(type='radio', v-model='report.type', value='logging')
-              | Logging
-          .radio
-            label
-              input(type='radio', v-model='report.type', value='threshold')
-              | Threshold
-          .radio
-            label
-              input(type='radio', v-model='report.type', value='alarm')
-              | Alarms
+      .panel.panel-default
+        .panel-heading
+          .panel-title New Report
+        .panel-body
+          .form-group(v-validate-class)
+            label.control-label Title
+            input.form-control(type='text', v-model='report.label', v-validate:title='["required"]', initial='off', detect-change='off')
+          .form-group
+            label.control-label Description
+            textarea.form-control {{ report.meta.description }}
+          .form-group(v-validate-class)
+            label.control-label Device Type
+            select.form-control(v-model='report.device_model_id', v-validate:type='["required"]', initial='off', detect-change='off')
+              option(value='') Select one
+              option(v-for='model in device_models', :value='model.id') {{model.label}}
 
-    //- .form-group
-    //-   tab-component(class='nav nav-pills', :tabs.sync='tabs', :selected-tab.sync='selectedTab')
+      div(v-if='report.device_model_id')
 
-    //- devices
-    .panel.panel-default
-      .panel-heading
-        .panel-title Devices
-      .panel-body
-        .checkbox(v-if='report.device_model_id', v-for='device in filteredDevices')
-          label
-            // todo: make an array of filtered devices that can push into
-            input(type='checkbox', value=true)
-            | {{ device.label }} &nbsp;
-            //- span.small.muted {{ device }}
-
-    //- logging
-    .panel.panel-default(v-if='report.type === "logging"')
-      .panel-heading
-        .panel-title Logging
-      .panel-body
-        .row.table-responsive
-            table.table.table-compact.table-striped
-              thead
-                tr
-                  th Parameter
-                  th Log
-                  th Min Threshold
-                  th Max Threshold
-                  th Alarm
-                tr
-                  td.col-help Parameter to measure
-                  td.col-help Include parameter and log all readings
-                  td.col-help Enter value to log min exceptions
-                  td.col-help Enter value to log max exceptions
-                  td.col-help Check to immediately notify on exception
-              tbody
-                tr(v-for='(i, param) in deviceParams')
-                  td 
-                    | {{ param.label }} &nbsp;
-                    span.small.muted {{ param.units }}
-                  td
-                    .checkbox
-                      label
-                        input(type='checkbox', v-model='param._selected', value=true)
-                  td(v-for='i in 2')
-                    input.form-control(style='width:auto;')
-                  td
-                    .checkbox
-                      label
-                        input(type='checkbox', v-model='param._alarm', value=true)
-
-    //- threshold
-    .panel.panel-default(v-if='report.type === "threshold"')
-      .panel-heading
-        .panel-title Threshold
-      .panel-body
-    
-    //- alarm
-    .panel.panel-default(v-if='report.type === "alarm"')
-      .panel-heading
-        .panel-title Alarm
-      .panel-body
-
-  //- credentials
-  .panel.panel-default
-      .panel-heading
-        .panel-title Export Profiles
-      .panel-body
-          .checkbox(v-for='(i, credential) in credentials')
-            label
-              input(type='checkbox', v-model='credential._selected', value=true)
-              | {{ credential.label }} &nbsp;
-              //- span.small.muted {{ parameter.units }}
-              .checkbox(v-if='credential._selected')
+        //- devices
+        .panel.panel-default
+          .panel-heading
+            .panel-title Devices
+          .panel-body
+            .checkbox(v-validate-class)
+              label.control-label
+                input(v-show='false', type='checkbox', v-validate:devices='{ required: true, minlength: 1 }', initial='off')
+                | Select one or more devices
+              .checkbox(v-if='report.device_model_id', v-for='device in filteredDevices')
                 label
-                  input(type='checkbox', v-model='credential._csv', value=true)
-                  | CSV
-                  //- span.small.muted {{ parameter.units }}
-              .checkbox(v-if='credential._selected')
-                label
-                  input(type='checkbox', v-model='credential._xml', value=true)
-                  | XML
-                  //- span.small.muted {{ parameter.units }}
-              .checkbox(v-if='credential._selected')
-                label
-                  input(type='checkbox', v-model='credential._json', value=true)
-                  | JSON
-                  //- span.small.muted {{ parameter.units }}
+                  input(type='checkbox', v-model='device._selected', value=true, v-validate:devices)
+                  | {{ device.label }}
+
+      div(v-if='isSelectedDevices')
+
+        //- logging
+        .panel.panel-default
+          .panel-heading
+            .panel-title Logging
+          .panel-body
+            .row.table-responsive
+                table.table.table-compact.table-striped
+                  thead
+                    tr
+                      th Parameter
+                      th.text-center Include
+                      th.text-center Log
+                      th Min Threshold
+                      th Max Threshold
+                      th.text-center Alarm
+                    tr
+                      td.col-help Parameter to measure
+                      td.col-help Include parameter in report
+                      td.col-help Log all readings
+                      td.col-help Enter value to log min exceptions
+                      td.col-help Enter value to log max exceptions
+                      td.col-help Immediately notify on exception
+                  tbody
+                    tr(v-for='(i, param) in deviceParams')
+                      td
+                        | {{ param.label }} &nbsp;
+                        span.small.muted {{ param.units }}
+                      td.text-center
+                        .checkbox
+                          label.control-label
+                            input(type='checkbox', v-model='param._selected', value=true)
+                      td.text-center
+                        .checkbox
+                          label.control-label
+                            input(v-if='param._selected', type='checkbox', v-model='param.log', value=true)
+                      td(v-for='(i, v) in ["min", "max"]')
+                        input.form-control(v-if='param._selected', v-model='param[v]', style='width:auto;')
+                      td.text-center
+                        .checkbox
+                          label.control-label
+                            input(type='checkbox', v-if='param._selected', v-model='param.alarm', :disabled='!(param.min || param.max)', value=true)
+                        span.text-help(v-else)
+
+        //- credentials
+        .panel.panel-default
+            .panel-heading
+              .panel-title Export Profiles
+            .panel-body
+                .checkbox(v-for='(i, credential) in credentials')
+                  label.control-label
+                    input(type='checkbox', v-model='credential._selected', value=true)
+                    | {{ credential.label }} &nbsp;
+                    .checkbox(v-if='credential._selected')
+                      label.control-label
+                        input(type='checkbox', v-model='credential._csv', value=true)
+                        | CSV
+                    .checkbox(v-if='credential._selected')
+                      label.control-label
+                        input(type='checkbox', v-model='credential._xml', value=true)
+                        | XML
+                    .checkbox(v-if='credential._selected')
+                      label.control-label
+                        input(type='checkbox', v-model='credential._json', value=true)
+                        | JSON
+
+      //- schedule
+      .panel.panel-default
+        .panel-heading
+          .panel-title Schedule
+        .panel-body
+          .form-group(v-validate-class)
+            label.control-label Logging Interval
+            select.form-control(v-model='report.meta.schedule.logging', v-validate:logging='["required"]', initial='off')
+              option(value='') Select interval
+              option(v-for='i in intervals', :value='i.value') {{ i.label }}
+          .form-group(v-validate-class)
+            label.control-label Export Interval
+            select.form-control(v-model='report.meta.schedule.export', v-validate:export='["required"]', initial='off')
+              option(value='') Select interval
+              option(v-for='i in intervals', :value='i.value') {{ i.label }}
+
+      .form-group
+        button.btn.btn-primary(@click.stop.prevent='doIfValid(save)') Save
+
+    debug(:debug='report')
 </template>
 
 <style lang="stylus">
+.disabled
+  opacity 0.7
 .col-help
   font-size 0.85em
   opacity 0.7
