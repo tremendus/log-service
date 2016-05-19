@@ -195,8 +195,8 @@ module.exports = {
   '/login': {
     component: require('../components/layouts/mask'),
     subRoutes: {
-      '/index': {
-        name: 'login/index',
+      '/': {
+        name: 'login',
         component: require('../components/login/index')
       }
     }

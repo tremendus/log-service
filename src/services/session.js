@@ -8,6 +8,7 @@ import config from '../configuration/session'
 
 const logger = new LogService({ label: 'session', silent: 0 })
 
+// todo: move to config?
 const prefix = 'accuenergy:gateway:'
 
 function mutate (key, data) {
@@ -51,41 +52,31 @@ function destroy (key) {
 window.destroy = destroy
 
 const state = {
-  auth: {
-    isAuthed: false,
-    user: {}
-  }
+  auth: {}
 }
 
-function initState () {
-  let _state = Object.assign({}, state)
-  const user = read('user') || {}
-  _state.auth.user = user
-  if (user.token) {
-    authorize(user)
-  }
-  return _state
+const authData = {
+  isAuthed: false,
+  token: null,
+  user: {}
 }
 
-function authorize (user) {
-  if (!user || !user.token) {
-    throw new Error('No user passed to authorize, required')
+function authorize (auth) {
+  if (!auth || !auth.token) {
+    throw new Error('No auth passed to authorize, required')
   }
-  const auth = Object.assign({}, state.auth)
-  auth.isAuthed = true
-  auth.user = user
-  mutate('auth', auth)
-  session.emit('authorized', auth)
+  const _auth = Object.assign({}, authData, auth, { isAuthed: true })
+  mutate('auth', _auth)
+  session.emit('authorized', _auth)
 }
 
-export function authenticate (user) {
-  logger.log('authenticate()', user)
-  action('users/authenticate', 'post', { data: user })
+export function authenticate (credentials) {
+  logger.log('authenticate()', credentials)
+  action('users/authenticate', 'post', { data: { auth: credentials } })
     .then((response) => {
       // todo: handle errors (or adapter?) and unauthorized
-      const user = response
-      authorize(user)
-      write('user', user)
+      authorize(response)
+      write('auth', response)
     })
     .catch((error) => {
       // this.emit('error', error)
@@ -94,10 +85,15 @@ export function authenticate (user) {
 }
 
 export function initialize () {
-
+  const auth = read('auth') || {}
+  if (!auth.token) {
+    return false
+  }
+  // todo: test the token on the server?
+  authorize(auth)
 }
 
 const session = new EventEmitter()
 session.authenticate = authenticate
-session.state = initState()
+initialize()
 export default session
