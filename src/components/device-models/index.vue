@@ -35,5 +35,5 @@ export default vue
           tbody
             tr(v-for='model in collection')
               td
-                a(v-link='{ name: "device-models/view", params: { deviceModelId: model.id } }', v-text='model.label')
+                a(v-link='{ name: "device-models/edit", params: { deviceModelId: model.id } }', v-text='model.label')
 </template>

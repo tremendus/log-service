@@ -1,38 +1,29 @@
 <script>
 /* eslint-disable */
-import { readMany, action, create } from 'restful-service'
+import { readOne, action } from 'restful-service'
 import FormComponent from './form'
 
 const vue = {
-  name: 'DeviceModelAdd',
+  name: 'DeviceModelsView',
   components: { FormComponent },
   data () {
     return {
-      id: 0,
-      model: {
-        label: null,
-        device_class_id: 1,  // todo: reserve for custom devices?
-        device_definition_id: null, // assigned on save
-        factory: 0,
-        meta: {
-          protocols: {
-            modbus: {
-              tcp: false,
-              rtu: false
-            }
-          }
-        },
-        device_definition: {
-          meta: {
-            params: []
-          }
-        }
+      query: {
+        related: ['device_definition']
+      },
+      model: []
+    }
+  },
+  route: {
+    data () {
+      return {
+        model: readOne('device_models', this.$route.params.deviceModelId, this.query)
       }
     }
   },
   methods: {
     save () {
-      console.log('add:save()')
+      console.log('edit:save()')
       // clone the data
       const model = Object.assign({}, this.model)
       const definition = Object.assign({}, this.model.device_definition)
@@ -73,8 +64,10 @@ export default vue
 </script>
 
 <template lang="jade">
-#device-model-add
-  h3 Add Device Model
-  debug(:debug='model')
-  form-component(:model.sync='model', @action='save')
-</template>
+#device-models-view
+  .container-fluid
+    .row
+      .col-xs-12(v-if='!$loadingRouteData')
+        h3 {{model.label}}
+        form-component(:model.sync='model', @action='save')
+        </template>

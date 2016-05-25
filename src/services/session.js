@@ -3,7 +3,7 @@
 import LogService from 'log-service'
 import { action } from 'restful-service'
 import EventEmitter from 'events'
-import config from '../configuration/session'
+// import config from '../configuration/session'
 // import state from './state'
 
 const logger = new LogService({ label: 'session', silent: 0 })
@@ -36,9 +36,9 @@ function read (key) {
 }
 
 function write (key, data) {
-  logger.log('write()', key, data)
   const keyPath = prefix + key
-  data._expires = new Date().getTime() + (1000 * config.duration)
+  logger.log('write()', key, data, keyPath)
+  // data._expires = new Date().getTime() + (1000 * config.duration)
   const value = JSON.stringify(data)
   localStorage.setItem(keyPath, value)
   return
@@ -95,5 +95,6 @@ export function initialize () {
 
 const session = new EventEmitter()
 session.authenticate = authenticate
+session.state = state
 initialize()
 export default session

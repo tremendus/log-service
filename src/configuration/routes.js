@@ -59,6 +59,10 @@ module.exports = {
             name: 'device-models/view',
             component: require('../components/device-models/view')
           },
+          '/edit/:deviceModelId': {
+            name: 'device-models/edit',
+            component: require('../components/device-models/edit')
+          },
           '/add': {
             name: 'device-models/add',
             component: require('../components/device-models/add')

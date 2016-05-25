@@ -1,18 +1,19 @@
 <script>
 import { create } from 'restful-service'
-import DevicesForm from './form'
+import FormComponent from './form'
 
 const vue = {
   name: 'DevicesAdd',
-  components: [DevicesForm],
+  components: { FormComponent },
   data () {
     return {
       collection: [],
-      device: {
+      model: {
         label: '',
         device_model_id: null,
         meta: {
           protocols: {
+            use: 'tcp',
             modbus: {
               tcp: {
                 ip: '192.168.0.1',
@@ -34,21 +35,22 @@ const vue = {
   },
   methods: {
     create () {
-      create('devices', this.device)
+      create('devices', this.model)
         .then(() => {
           console.warn('No event handler on create')
           // this.reset('devices', 'devices')
           // this.device.label = ''
         })
-    },
-    reset (key, model) {
-      this.$set(key, model)
-      console.warn('No event handler on reset')
-      // store.readMany(model)
-      //   .then(data => {
-      //     this.$set(key, data)
-      //   })
     }
+    // unused?
+    // reset (key, model) {
+    //   this.$set(key, model)
+    //   console.warn('No event handler on reset')
+    //   // store.readMany(model)
+    //   //   .then(data => {
+    //   //     this.$set(key, data)
+    //   //   })
+    // }
   }
 }
 
@@ -61,5 +63,5 @@ export default vue
     .row
       .col-xs-12
         h3 Add Device
-        devices-form(:device='device', @action='create')
+        form-component(:model.sync='model', @action='create')
 </template>

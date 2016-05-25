@@ -18,7 +18,7 @@ export default {
       }
     },
     reports: {
-      label: 'Reports',
+      label: 'Report Config',
       links: {
         alarms: {
           label: 'Alarms',
@@ -27,15 +27,28 @@ export default {
         reports: {
           label: 'Reports',
           route: { name: 'reports/index' }
-        },
-        reports_add: {
-          label: 'Reports Add',
-          route: { name: 'reports/add' }
         }
+        // reports_add: {
+        //   label: 'Reports Add',
+        //   route: { name: 'reports/add' }
+        // }
         // templates: {
         //   label: 'Templates',
         //   route: { name: 'no-route' }
         // }
+      }
+    },
+    data: {
+      label: 'Data & Logs',
+      links: {
+        thresholds: {
+          label: 'Exceptions',
+          route: { name: 'no-route' }
+        },
+        reports: {
+          label: 'Normal Data',
+          route: { name: 'no-route' }
+        }
       }
     },
     settings: {

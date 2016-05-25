@@ -1,11 +1,17 @@
 <script>
 import { readMany } from 'restful-service'
+import session from '../../services/session'
 
 const vue = {
   name: 'CredentialsIndex',
   data () {
     return {
       collection: []
+    }
+  },
+  computed: {
+    state () {
+      return session.state
     }
   },
   route: {

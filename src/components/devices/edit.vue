@@ -1,10 +1,10 @@
 <script>
 import { readOne, update } from 'restful-service'
-import DevicesForm from './form'
+import FormComponent from './form'
 
 const vue = {
   name: 'DevicesEdit',
-  components: [DevicesForm],
+  components: { FormComponent },
   data () {
     return {
       model: {}
@@ -19,7 +19,7 @@ const vue = {
   },
   methods: {
     update () {
-      update('devices', this.device)
+      update('devices', this.model)
         .then(() => {
           console.warn('No event handler on update')
           // this.reset('devices', 'devices')
@@ -38,5 +38,5 @@ export default vue
     .row
       .col-xs-12(v-if='!$loadingRouteData')
         h3 Edit Device
-        devices-form(:device='device', @action='update')
+        form-component(:model.sync='model', @action='update')
 </template>
