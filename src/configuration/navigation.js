@@ -18,14 +18,10 @@ export default {
       }
     },
     reports: {
-      label: 'Report Config',
+      label: 'Reports',
       links: {
-        alarms: {
-          label: 'Alarms',
-          route: { name: 'no-route' }
-        },
         reports: {
-          label: 'Reports',
+          label: 'List Reports',
           route: { name: 'reports/index' }
         }
         // reports_add: {
@@ -43,11 +39,11 @@ export default {
       links: {
         thresholds: {
           label: 'Exceptions',
-          route: { name: 'no-route' }
+          route: { name: 'readings/thresholds' }
         },
         reports: {
-          label: 'Normal Data',
-          route: { name: 'no-route' }
+          label: 'Logged Data',
+          route: { name: 'readings/index' }
         }
       }
     },

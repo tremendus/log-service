@@ -88,7 +88,7 @@ const vue = {
       this.params.push(add)
       this.selected = this.params.length - 1
     },
-    doIfValid (cb, v) {
+    doIfValid (cb) {
       this.$validate()
       if (this.$form.valid) {
         // this.append()
@@ -96,7 +96,7 @@ const vue = {
           cb.call()
           return
         } else {
-          this.$emit('form:valid')
+          this.$emit('action')
         }
       } else {
         const opts = {

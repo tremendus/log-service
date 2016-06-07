@@ -64,13 +64,13 @@ export default vue
 
             div(v-validate-class)
               label.checkbox-inline
-                input(type='radio', name='protocol', v-model='model.meta.protocols.use', value='tcp')
+                input(type='radio', name='protocol', v-model='model.meta.protocols.modbus.use', value='tcp')
                 | &nbsp; TCP
               label.checkbox-inline
-                input(type='radio', name='protocol', v-model='model.meta.protocols.use', value='rtu')
+                input(type='radio', name='protocol', v-model='model.meta.protocols.modbus.use', value='rtu')
                 | &nbsp; RTU
 
-          .panel-body(v-if='model.meta.protocols.use === "tcp"')
+          .panel-body(v-if='model.meta.protocols.modbus.use === "tcp"')
             .form-group(v-validate-class)
               label.control-label IP Address
               input.form-control(type='text', v-model='model.meta.protocols.modbus.tcp.ip', v-validate:ip.word='["ip"]', initial='off', detect-change='off')
@@ -78,7 +78,7 @@ export default vue
               label.control-label Port
               input.form-control(type='text', v-model='model.meta.protocols.modbus.tcp.port', v-validate:port='{ min: 1, max: 65535 }', initial='off', detect-change='off')
 
-          .panel-body(v-if='model.meta.protocols.use === "rtu"')
+          .panel-body(v-if='model.meta.protocols.modbus.use === "rtu"')
             .form-group
               label.control-label Device
               input.form-control(type='text', v-model='model.meta.protocols.modbus.rtu.device')

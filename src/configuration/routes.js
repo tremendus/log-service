@@ -69,6 +69,23 @@ module.exports = {
           }
         }
       },
+      '/readings': {
+        name: 'readings',
+        component: {
+          name: 'Readings',
+          template: '<div id="#readings"><router-view /></div>'
+        },
+        subRoutes: {
+          '/': {
+            name: 'readings/index',
+            component: require('../components/readings/index')
+          },
+          '/thresholds': {
+            name: 'readings/thresholds',
+            component: require('../components/readings/thresholds')
+          }
+        }
+      },
 
       // todo: move to settings?
       '/users': {

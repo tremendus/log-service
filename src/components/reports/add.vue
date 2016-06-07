@@ -87,8 +87,10 @@ const vue = {
       // create
       const params = this.deviceParams.filter((p) => p._selected)
       const creds = this.credentials.filter((c) => c._selected)
-      this.report.meta.params = params
-
+      this.report.meta.parameters = params
+      this.report.meta.credentials = creds
+      // temp: hack to make it work - consider alter table todo:
+      create('reports', this.report)
     }
   }
 }
@@ -217,8 +219,24 @@ export default vue
               option(value='') Select interval
               option(v-for='i in intervals', :value='i.value') {{ i.label }}
 
+      //- options
+      .panel.panel-default
+        .panel-heading
+          .panel-title Options
+        .panel-body
+          .checkbox
+            label.control-label
+              input(type='checkbox', v-model='report.meta.options.headings', value=true)
+              | Include column headings
+              br
+              small Exporter uses parameter abbreviations as headings where set and parameter labels if not
+            .checkbox
+              label.control-label
+                input(type='checkbox', v-model='report.meta.options.units', value=true)
+                | Include units
+
       .form-group
-        button.btn.btn-primary(@click.stop.prevent='doIfValid(save)') Save
+        button.btn.btn-primary(@click.stop.prevent='create') Save
 
     debug(:debug='report')
 </template>
