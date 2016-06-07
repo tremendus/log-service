@@ -76,10 +76,11 @@ module.exports = {
           template: '<div id="#readings"><router-view /></div>'
         },
         subRoutes: {
-          '/': {
-            name: 'readings/index',
-            component: require('../components/readings/index')
-          },
+          // note: commented out due to complexities of batching
+          // '/': {
+          //   name: 'readings/index',
+          //   component: require('../components/readings/index')
+          // },
           '/thresholds': {
             name: 'readings/thresholds',
             component: require('../components/readings/thresholds')

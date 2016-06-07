@@ -40,10 +40,10 @@ export default {
         thresholds: {
           label: 'Exceptions',
           route: { name: 'readings/thresholds' }
-        },
-        reports: {
-          label: 'Logged Data',
-          route: { name: 'readings/index' }
+        // },
+        // reports: {
+        //   label: 'Logged Data',
+        //   route: { name: 'readings/index' }
         }
       }
     },
