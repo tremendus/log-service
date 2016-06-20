@@ -1,20 +1,10 @@
 <script>
-import { readMany } from 'restful-service'
+import CollectionMixin from '../../mixins/collection'
 
 const vue = {
-  name: 'DeviceModelsIndex',
-  data () {
-    return {
-      collection: []
-    }
-  },
-  route: {
-    data () {
-      return {
-        collection: readMany('device_models')
-      }
-    }
-  }
+  name: 'DevicesIndex',
+  resource: 'device_models',
+  mixins: [CollectionMixin]
 }
 
 export default vue
@@ -35,5 +25,5 @@ export default vue
           tbody
             tr(v-for='model in collection')
               td
-                a(v-link='{ name: "device-models/edit", params: { deviceModelId: model.id } }', v-text='model.label')
+                a(v-link='{ name: "device-models/edit", params: { id: model.id } }', v-text='model.label')
 </template>

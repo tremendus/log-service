@@ -1,29 +1,29 @@
 <script>
 /* eslint-disable */
-import { readOne, action } from 'restful-service'
+import uuid from 'uuid'
+import events from '../../services/events'
+import { action } from '../../services/store'
+import ModelMixin from '../../mixins/model'
 import FormComponent from './form'
 
 const vue = {
   name: 'DeviceModelsView',
+  resource: 'device_models',
+  mixins: [ModelMixin],
   components: { FormComponent },
   data () {
     return {
       query: {
         related: ['device_definition']
-      },
-      model: []
-    }
-  },
-  route: {
-    data () {
-      return {
-        model: readOne('device_models', this.$route.params.deviceModelId, this.query)
       }
     }
   },
   methods: {
     save () {
       console.log('edit:save()')
+
+      this.isRequest = true
+
       // clone the data
       const model = Object.assign({}, this.model)
       const definition = Object.assign({}, this.model.device_definition)
@@ -31,8 +31,9 @@ const vue = {
       //- prep the save obj
       // delete the key
       delete model.device_definition
-      // map the index to arbitrary id
-      definition.meta.params.map((p, i) => p.id = i)
+
+      // map the index to unique id
+      definition.meta.params.map((p, i) => p.id = uuid.v4())
       const data = {
         device_model: model,
         device_definition: definition
@@ -40,22 +41,9 @@ const vue = {
 
       // todo: fixme: replace with model create api
       action('device-models', 'post', { data })
-        .then((result) => {
-          console.log('save():action:result', result)
-          const opts = {
-            level: 'success',
-            message: 'Your device was successfully created'
-          }
-          this.$root.$broadcast('notification:show', opts)
-          setTimeout(this.$router.go({ name: 'device-models/index' }), 2000)
-        })
-        .catch((error) => {
-          const opts = {
-            level: 'danger',
-            // todo: proper error messages: consider should this be handled at adapter or store, not here?
-            message: 'There was a problem saving your device. Try again, if the problem persists ... there is little you can do'
-          }
-          this.$root.$broadcast('notification:show', opts)
+        .then(() => {
+          events('notification:success').broadcast('Device model updated')
+          this.$router.go({ name: 'device-models/index' })
         })
     }
   }

@@ -1,5 +1,5 @@
 <script>
-import { readOne, update } from 'restful-service'
+import { readOne, update } from '../../services/store'
 import CredentialsForm from './form'
 
 const vue = {

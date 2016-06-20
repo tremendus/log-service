@@ -1,6 +1,6 @@
 <script>
 /* incomplete: not yet in use - too convoluted? */
-var vue = {
+const vue = {
   name: 'DeviceModelsSelect',
   data () {
     return {

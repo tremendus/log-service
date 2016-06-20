@@ -1,5 +1,5 @@
 <script>
-import { readMany } from 'restful-service'
+import { readMany } from '../../services/store'
 
 const vue = {
   name: 'DevicesForm',
@@ -21,8 +21,8 @@ const vue = {
   },
   created () {
     readMany('device_models')
-      .then((collection) => {
-        this.deviceModels = collection
+      .then((data) => {
+        this.deviceModels = data.collection
       })
   },
   methods: {

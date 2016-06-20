@@ -1,14 +1,15 @@
 /* global localStorage */
 
 import LogService from 'log-service'
-import { action } from 'restful-service'
-import EventEmitter from 'events'
+import { action } from './store'
+import events from './events'
 // import config from '../configuration/session'
 // import state from './state'
 
-const logger = new LogService({ label: 'session', silent: 0 })
+const logger = new LogService({ label: 'session', silent: 1 })
 
 // todo: move to config?
+// todo: session expiry
 const prefix = 'accuenergy:gateway:'
 
 function mutate (key, data) {
@@ -20,17 +21,19 @@ function mutate (key, data) {
 function read (key) {
   const keyPath = prefix + key
   const value = localStorage.getItem(keyPath)
+  logger.log('read()', keyPath, value)
   if (!value) {
     return null
   }
   const data = JSON.parse(value)
   const now = new Date().getTime()
-  console.log('read():expires', data._expires, now, data._expires < now)
+  logger.log('read():expires', data._expires, now, data._expires < now)
 
-  if (data._expires < now) {
-    destroy(key)
-    return null
-  }
+  // if (data._expires < now) {
+  //   destroy(key)
+  //   return null
+  // }
+
   logger.log('read()', key, data)
   return data
 }
@@ -48,7 +51,9 @@ function destroy (key) {
   logger.log('destroy()', key)
   const keyPath = prefix + key
   localStorage.removeItem(keyPath)
+  throw new Error('Something called destroy')
 }
+// todo: remove window.destroy
 window.destroy = destroy
 
 const state = {
@@ -67,7 +72,7 @@ function authorize (auth) {
   }
   const _auth = Object.assign({}, authData, auth, { isAuthed: true })
   mutate('auth', _auth)
-  session.emit('authorized', _auth)
+  events('session:authorized').broadcast(_auth)
 }
 
 export function authenticate (credentials) {
@@ -75,17 +80,26 @@ export function authenticate (credentials) {
   action('users/authenticate', 'post', { data: { auth: credentials } })
     .then((response) => {
       // todo: handle errors (or adapter?) and unauthorized
-      authorize(response)
       write('auth', response)
+      authorize(response)
+    }).catch((error) => {
+      // todo: look at error status code
+      error.status
+      destroy('auth')
+      events('session:notAuthorized').broadcast()
     })
-    .catch((error) => {
-      // this.emit('error', error)
-      error
-    })
+}
+
+export function deauthorize () {
+  const _auth = Object.assign({}, authData)
+  mutate('auth', _auth)
+  destroy('auth')
+  events('session:deauthorized').broadcast()
 }
 
 export function initialize () {
   const auth = read('auth') || {}
+  logger.log('initialize()', auth)
   if (!auth.token) {
     return false
   }
@@ -93,8 +107,8 @@ export function initialize () {
   authorize(auth)
 }
 
-const session = new EventEmitter()
-session.authenticate = authenticate
-session.state = state
-initialize()
-export default session
+export default {
+  authenticate,
+  deauthorize,
+  state
+}

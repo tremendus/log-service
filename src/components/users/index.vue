@@ -1,5 +1,5 @@
 <script>
-import { readMany } from 'restful-service'
+import { readMany } from '../../services/store'
 
 const vue = {
   name: 'UsersIndex',

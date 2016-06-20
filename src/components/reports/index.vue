@@ -1,20 +1,10 @@
 <script>
-import { readMany } from 'restful-service'
+import CollectionMixin from '../../mixins/collection'
 
 const vue = {
   name: 'ReportsIndex',
-  data () {
-    return {
-      collection: []
-    }
-  },
-  route: {
-    data () {
-      return {
-        collection: readMany('report')
-      }
-    }
-  }
+  resource: 'reports',
+  mixins: [CollectionMixin]
 }
 
 export default vue
@@ -24,7 +14,7 @@ export default vue
 #reports-index
   .container-fluid
     .row
-      .col-xs-12(v-if='!$loadingRouteData')
+      .col-xs-12(v-if='!isRequesting')
         h3
           a.btn.btn-primary.pull-right(v-link='{ name: "reports/add" }') Add
           | Reports
@@ -35,5 +25,5 @@ export default vue
           tbody
             tr(v-for='model in collection')
               td
-                a(v-link='{ name: "reports/view", params: { reportId: model.id } }', v-text='model.label')
+                a(v-link='{ name: "reports/view", params: { id: model.id } }', v-text='model.label')
 </template>

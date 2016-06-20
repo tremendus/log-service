@@ -30,7 +30,7 @@ module.exports = {
             name: 'devices/index',
             component: require('../components/devices/index')
           },
-          '/view/:deviceId': {
+          '/view/:id': {
             name: 'devices/view',
             component: require('../components/devices/view')
           },
@@ -38,7 +38,7 @@ module.exports = {
             name: 'devices/add',
             component: require('../components/devices/add')
           },
-          '/edit/:deviceId': {
+          '/edit/:id': {
             name: 'devices/edit',
             component: require('../components/devices/edit')
           }
@@ -55,11 +55,11 @@ module.exports = {
             name: 'device-models/index',
             component: require('../components/device-models/index')
           },
-          '/view/:deviceModelId': {
+          '/view/:id': {
             name: 'device-models/view',
             component: require('../components/device-models/view')
           },
-          '/edit/:deviceModelId': {
+          '/edit/:id': {
             name: 'device-models/edit',
             component: require('../components/device-models/edit')
           },
@@ -89,31 +89,31 @@ module.exports = {
       },
 
       // todo: move to settings?
-      '/users': {
-        name: 'users',
-        component: {
-          name: 'users',
-          template: '<div id="#users"><router-view /></div>'
-        },
-        subRoutes: {
-          '/': {
-            name: 'users/index',
-            component: require('../components/users/index')
-          },
-          '/view/:userId': {
-            name: 'users/view',
-            component: require('../components/users/view')
-          },
-          '/edit/:userId': {
-            name: 'users/edit',
-            component: require('../components/users/edit')
-          },
-          '/add': {
-            name: 'users/add',
-            component: require('../components/users/add')
-          }
-        }
-      },
+      // '/users': {
+      //   name: 'users',
+      //   component: {
+      //     name: 'users',
+      //     template: '<div id="#users"><router-view /></div>'
+      //   },
+      //   subRoutes: {
+      //     '/': {
+      //       name: 'users/index',
+      //       component: require('../components/users/index')
+      //     },
+      //     '/view/:id': {
+      //       name: 'users/view',
+      //       component: require('../components/users/view')
+      //     },
+      //     '/edit/:id': {
+      //       name: 'users/edit',
+      //       component: require('../components/users/edit')
+      //     },
+      //     '/add': {
+      //       name: 'users/add',
+      //       component: require('../components/users/add')
+      //     }
+      //   }
+      // },
       '/settings': {
         name: 'settings',
         component: {
@@ -124,6 +124,10 @@ module.exports = {
           '/network': {
             name: 'settings/network',
             component: require('../components/settings/network')
+          },
+          '/passwords': {
+            name: 'settings/passwords',
+            component: require('../components/settings/passwords')
           }
         }
       },
@@ -163,11 +167,11 @@ module.exports = {
             name: 'reports/index',
             component: require('../components/reports/index')
           },
-          '/view/:reportId': {
+          '/view/:id': {
             name: 'reports/view',
             component: require('../components/reports/view')
           },
-          '/edit/:reportId': {
+          '/edit/:id': {
             name: 'reports/edit',
             component: require('../components/reports/edit')
           },
@@ -188,11 +192,11 @@ module.exports = {
             name: 'credentials/index',
             component: require('../components/credentials/index')
           },
-          '/view/:credentialId': {
+          '/view/:id': {
             name: 'credentials/view',
             component: require('../components/credentials/view')
           },
-          '/edit/:credentialId': {
+          '/edit/:id': {
             name: 'credentials/edit',
             component: require('../components/credentials/edit')
           },

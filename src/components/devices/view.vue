@@ -1,5 +1,5 @@
 <script>
-import { readOne } from 'restful-service'
+import ModelMixin from '../../mixins/model'
 import { mixin as TabMixin, component as TabComponent } from '../../plugins/tabs'
 import DeviceReadings from './readings'
 import DeviceLogs from './logs'
@@ -7,13 +7,14 @@ import DeviceThresholds from './thresholds'
 
 const vue = {
   name: 'DevicesView',
+  resource: 'devices',
   components: {
     TabComponent,
     DeviceReadings,
     DeviceLogs,
     DeviceThresholds
   },
-  mixins: [TabMixin],
+  mixins: [ModelMixin, TabMixin],
   data () {
     return {
       query: {
@@ -21,11 +22,19 @@ const vue = {
           related: ['device_model.device_definition']
         }
       },
-      model: [],
       tabs: [
-        { code: 'readings', label: 'Realtime Readings' },
-        { code: 'logs', label: 'Historical Data' },
-        { code: 'thresholds', label: 'Thresholds & Alarms' }
+        {
+          code: 'readings',
+          label: 'Realtime Readings'
+        },
+        {
+          code: 'logs',
+          label: 'Historical Data'
+        },
+        {
+          code: 'thresholds',
+          label: 'Thresholds & Alarms'
+        }
       ],
       selectedTab: 'readings'
     }
@@ -35,16 +44,6 @@ const vue = {
       const s = this.selectedTab
       return 'Device' + s.charAt(0).toUpperCase() + s.substring(1)
     }
-  },
-  route: {
-    data () {
-      return {
-        model: readOne('devices', this.$route.params.deviceId, this.query.device)
-      }
-    }
-  },
-  watch: {
-
   }
 }
 
@@ -55,7 +54,7 @@ export default vue
 #devices-view
   .container-fluid
     .row
-      .col-xs-12(v-if='!$loadingRouteData')
+      .col-xs-12(v-if='!isRequest')
         h3 {{ model.label }}
 
         .panel.panel-default

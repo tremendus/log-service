@@ -1,10 +1,10 @@
 <script>
-// import { readMany } from 'restful-service'
+// import { readMany } from '../../services/store'
 import LogsReports from './logs-reports'
 import LogsBatches from './logs-batches'
 import LogsReadings from './logs-readings'
 
-var vue = {
+const vue = {
   name: 'DeviceLogs',
   props: ['device'],
   components: {

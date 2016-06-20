@@ -1,6 +1,7 @@
 <script>
 /* eslint-disable */
-import { readMany, action, create } from 'restful-service'
+import events from '../../services/events'
+import { readMany, action, create } from '../../services/store'
 
 const vue = {
   name: 'reports-add',
@@ -12,6 +13,7 @@ const vue = {
         device_model_id: null,
         meta: {
           description: null,
+          devices: [],
           params: [],
           credentials: [],
           schedule: {}
@@ -66,9 +68,6 @@ const vue = {
         return 0
       })
       return sorted
-    },
-    reportParams () {
-
     }
   },
   route: {
@@ -76,21 +75,38 @@ const vue = {
       return {
         // TODO: replace me with parameter json
         parameters: action('api/parameters'),
-        devices: readMany('devices', this.query.devices),
-        device_models: readMany('device_models', this.query.device_models),
-        credentials: readMany('credentials')
+        devices: readMany('devices', this.query.devices).then((data) => data.collection),
+        device_models: readMany('device_models', this.query.device_models).then((data) => data.collection),
+        credentials: readMany('credentials').then((data) => data.collection)
       }
     }
   },
   methods: {
     create () {
       // create
-      const params = this.deviceParams.filter((p) => p._selected)
-      const creds = this.credentials.filter((c) => c._selected)
+      const params = this.deviceParams
+        .filter((p) => p._selected)
+        .map(({ id, log, min, max, alarm }) => {
+          return { id, log, min, max, alarm }
+        })
       this.report.meta.parameters = params
+      const creds = this.credentials
+        .filter((c) => c._selected)
+        .map(({ id, csv, xml, json }) => {
+          return { id, csv, xml, json }
+        })
       this.report.meta.credentials = creds
+      const devices = this.devices
+        .filter((d) => d._selected)
+        .map(({ id }) => id)
+      this.report.meta.devices = devices
       // temp: hack to make it work - consider alter table todo:
+      console.log('this.report.meta', this.report.meta)
       create('reports', this.report)
+        .then(() => {
+          events('notification:success').broadcast('Report saved')
+          this.$router.go({ name: 'reports/index' })
+        })
     }
   }
 }
@@ -181,6 +197,8 @@ export default vue
                             input(type='checkbox', v-if='param._selected', v-model='param.alarm', :disabled='!(param.min || param.max)', value=true)
                         span.text-help(v-else)
 
+        //- debug(:debug='deviceParams')
+
         //- credentials
         .panel.panel-default
             .panel-heading
@@ -192,15 +210,15 @@ export default vue
                     | {{ credential.label }} &nbsp;
                     .checkbox(v-if='credential._selected')
                       label.control-label
-                        input(type='checkbox', v-model='credential._csv', value=true)
+                        input(type='checkbox', v-model='credential.csv', value=true)
                         | CSV
                     .checkbox(v-if='credential._selected')
                       label.control-label
-                        input(type='checkbox', v-model='credential._xml', value=true)
+                        input(type='checkbox', v-model='credential.xml', value=true)
                         | XML
                     .checkbox(v-if='credential._selected')
                       label.control-label
-                        input(type='checkbox', v-model='credential._json', value=true)
+                        input(type='checkbox', v-model='credential.json', value=true)
                         | JSON
 
       //- schedule

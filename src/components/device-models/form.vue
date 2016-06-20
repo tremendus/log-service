@@ -1,7 +1,8 @@
 <script>
 /* eslint-disable */
 import Vue from 'vue'
-import { action } from 'restful-service'
+import events from '../../services/events'
+import { action } from '../../services/store'
 import { component as TabComponent, mixin as TabMixin } from '../../plugins/tabs'
 
 const vue = {
@@ -99,11 +100,7 @@ const vue = {
           this.$emit('action')
         }
       } else {
-        const opts = {
-          level: 'warning',
-          message: 'Please check form fields. All fields must be valid before continuing.'
-        }
-        this.$root.$broadcast('notification:show', opts)
+        events('notification:error').broadcast('Please check all fields before continuing')
       }
     },
     remove (i) {

@@ -51,9 +51,9 @@ export default {
       label: 'Settings',
       isAdmin: true,
       links: {
-        users: {
-          label: 'Users',
-          route: { name: 'users/index' }
+        passwords: {
+          label: 'Passwords',
+          route: { name: 'settings/passwords' }
         },
         network: {
           label: 'Network',

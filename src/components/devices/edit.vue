@@ -1,29 +1,19 @@
 <script>
-import { readOne, update } from 'restful-service'
+import ModelMixin from '../../mixins/model'
 import FormComponent from './form'
+import events from '../../services/events'
 
 const vue = {
   name: 'DevicesEdit',
+  resource: 'devices',
+  mixins: [ModelMixin],
   components: { FormComponent },
-  data () {
-    return {
-      model: {}
-    }
-  },
-  route: {
-    data () {
-      return {
-        model: readOne('devices', this.$route.params.deviceId)
-      }
-    }
-  },
   methods: {
-    update () {
-      update('devices', this.model)
+    save () {
+      this.update()
         .then(() => {
-          console.warn('No event handler on update')
-          // this.reset('devices', 'devices')
-          // this.device.label = ''
+          events('notification:success').broadcast('Device saved')
+          this.$router.go({ name: 'devices/index' })
         })
     }
   }
@@ -38,5 +28,5 @@ export default vue
     .row
       .col-xs-12(v-if='!$loadingRouteData')
         h3 Edit Device
-        form-component(:model.sync='model', @action='update')
+        form-component(:model.sync='model', @action='save')
 </template>

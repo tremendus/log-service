@@ -1,7 +1,7 @@
 <script>
-import { action } from 'restful-service'
+import { action } from '../../services/store'
 
-var vue = {
+const vue = {
   name: 'DeviceLogsReports',
   props: ['device', 'report', 'reports'],
   created () {

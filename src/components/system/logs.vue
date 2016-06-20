@@ -2,7 +2,7 @@
 // todo: clear logs
 // todo: download all at once
 
-import { action } from 'restful-service'
+import { action } from '../../services/store'
 import config from '../../configuration/adapter'
 
 const vue = {

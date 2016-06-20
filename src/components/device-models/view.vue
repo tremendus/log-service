@@ -1,20 +1,14 @@
 <script>
-import { readOne } from 'restful-service'
+import ModelMixin from '../../mixins/model'
 
 const vue = {
   name: 'DeviceModelsView',
+  resource: 'device_models',
+  mixins: [ModelMixin],
   data () {
     return {
       query: {
         related: ['device_class', 'device_definition']
-      },
-      model: []
-    }
-  },
-  route: {
-    data () {
-      return {
-        model: readOne('device_models', this.$route.params.deviceModelId, this.query)
       }
     }
   }

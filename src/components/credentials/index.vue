@@ -1,26 +1,10 @@
 <script>
-import { readMany } from 'restful-service'
-import session from '../../services/session'
+import CollectionMixin from '../../mixins/collection'
 
 const vue = {
   name: 'CredentialsIndex',
-  data () {
-    return {
-      collection: []
-    }
-  },
-  computed: {
-    state () {
-      return session.state
-    }
-  },
-  route: {
-    data () {
-      return {
-        collection: readMany('credentials')
-      }
-    }
-  }
+  resource: 'credentials',
+  mixins: [CollectionMixin]
 }
 
 export default vue
@@ -41,5 +25,5 @@ export default vue
           tbody
             tr(v-for='model in collection')
               td
-                a(v-link='{ name: "credentials/view", params: { credentialId: model.id } }', v-text='model.label')
+                a(v-link='{ name: "credentials/view", params: { id: model.id } }', v-text='model.label')
 </template>

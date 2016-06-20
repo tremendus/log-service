@@ -10,15 +10,15 @@ import DebugComponent from './plugins/debug'
 import SpinnerComponent from './plugins/spinner'
 import { initialize as initializeValidationRules } from './plugins/validation'
 
+// system
+import { initialize as initializeSession } from './services/session'
+import { initialize as initializeRouter } from './services/router'
+
 // configuration
 import routerConfig from './configuration/router'
-import routes from './configuration/routes'
-// import { initialize as initializeRouter } from './services/router'
-// import { initialize as initializeSession } from './services/session'
-// import deps from './deps' // eslint-disable-line no-unused-vars
 
-// main component
-import AppVue from './components/app.vue'
+// components
+import App from './components/app'
 
 // initialize
 Vue.config.debug = true
@@ -28,13 +28,11 @@ Vue.use(DebugComponent)
 Vue.use(SpinnerComponent)
 
 // session
-// initializeSession()
+initializeSession()
 
 // router
-const router = new VueRouter(routerConfig)
-router.map(routes) // note: temp: later, direct to router
-// initializeRouter(router)
-router.start(AppVue, '#app')
+const router = initializeRouter(new VueRouter(routerConfig))
+router.start(App, 'app')
 
 // validation
 initializeValidationRules(Vue)

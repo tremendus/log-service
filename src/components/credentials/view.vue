@@ -1,5 +1,5 @@
 <script>
-import { readOne } from 'restful-service'
+import { readOne } from '../../services/store'
 
 const vue = {
   name: 'CredentialsView',

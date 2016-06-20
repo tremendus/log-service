@@ -1,22 +1,28 @@
 <script>
-import { readOne } from 'restful-service'
+import PanelElement from '../elements/panel'
+import CredentialsComponent from './view-report-credentials'
 
-var vue = {
+const vue = {
   name: 'ReportsViewReport',
-  data () {
-    return {
-      model: {}
-    }
+  props: ['report'],
+  components: {
+    CredentialsComponent,
+    PanelElement
   },
-  created () {
-    this.fetch()
-  },
-  methods: {
-    fetch () {
-      readOne('report', this.$route.report_id)
-        .then((report) => {
-          this.model = report
-        })
+  computed: {
+    params () {
+      const rps = this.report.meta.parameters
+      const dps = this.report.device_model.device_definition.meta.params
+      const ps = rps.map((rp) => {
+        var match = dps.filter((dp) => dp.id === rp.id)[0]
+        return Object.assign({}, rp, match)
+      })
+      return ps
+    },
+    creds () {
+      const cs = this.report.meta.credentials
+        .map(({ id }) => id)
+      return cs
     }
   }
 }
@@ -26,5 +32,27 @@ export default vue
 
 <template lang="jade">
 #reports-view-report
-  debug(:debug='model')
+  .row
+    .col-sm-12
+
+      //- panel-element(title='Parameters')
+      //-   p some content
+
+      //- content
+        report settings
+          - basics
+            - name
+            - device model
+          - parameters
+          - credentials
+          - schedule
+          - options
+        params
+        logs/thresholds
+
+
+      //- credentials-component(:list='creds')
+
+      debug(:debug='report')
+
 </template>

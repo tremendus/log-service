@@ -1,5 +1,5 @@
 <script>
-var vue = {
+const vue = {
   name: 'form',
   data () {
     return {

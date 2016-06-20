@@ -1,12 +1,14 @@
 <script>
+// TODO: convert this to collection
+
 // todo: finish report readings
 // paginate batches
 // increment/decrement device
 // reset device resets pagination
 
-import { readMany } from 'restful-service'
+import { readMany } from '../../services/store'
 
-var vue = {
+const vue = {
   name: 'ReportsViewReadings',
   props: ['report', 'device'],
   data () {
@@ -15,7 +17,7 @@ var vue = {
       query: {
         where: {
           // device_id: this.device.id,
-          report_id: parseInt(this.$route.params.reportId)
+          report_id: parseInt(this.$route.params.id)
         },
         orderBy: ['created_at', 'desc'],
         limit: 20,
@@ -63,7 +65,7 @@ var vue = {
     fetch () {
       readMany('batches', this.query)
         .then((batches) => {
-          this.batches = batches
+          this.batches = batches.collection
         })
     },
     truncate (param) {
@@ -109,9 +111,6 @@ export default vue
               td(v-for='reading in batch')
                 | {{ reading.value }} &nbsp;
                 small {{ reading.units }}
-
-
-
 
   //- debug(:debug='params', :label='"params"')
   //- debug(:debug='columns', :label='"columns"')

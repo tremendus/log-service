@@ -1,31 +1,34 @@
 <script>
-import { create } from 'restful-service'
+import ModelMixin from '../../mixins/model'
 import FormComponent from './form'
+import events from '../../services/events'
 
 const vue = {
   name: 'DevicesAdd',
+  resource: 'devices',
+  mixins: [ModelMixin],
   components: { FormComponent },
   data () {
     return {
       collection: [],
       model: {
-        label: '',
+        label: null,
         device_model_id: null,
         meta: {
           protocols: {
             use: 'tcp',
             modbus: {
               tcp: {
-                ip: '192.168.0.1',
-                port: 3500
+                ip: null,
+                port: null
               },
               rtu: {
-                device: 32,
-                port: '/dev/tty3',
-                baud: 9600,
-                dataBit: 8,
-                parity: 'N',
-                stopBit: 1
+                device: null,
+                port: null,
+                baud: null,
+                dataBit: null,
+                parity: null,
+                stopBit: null
               }
             }
           }
@@ -34,23 +37,14 @@ const vue = {
     }
   },
   methods: {
-    create () {
-      create('devices', this.model)
+    save () {
+      this.isRequest = true
+      this.create()
         .then(() => {
-          console.warn('No event handler on create')
-          // this.reset('devices', 'devices')
-          // this.device.label = ''
+          events('notification:success').broadcast('Device created')
+          this.$router.go({ name: 'devices/index' })
         })
     }
-    // unused?
-    // reset (key, model) {
-    //   this.$set(key, model)
-    //   console.warn('No event handler on reset')
-    //   // store.readMany(model)
-    //   //   .then(data => {
-    //   //     this.$set(key, data)
-    //   //   })
-    // }
   }
 }
 
@@ -63,5 +57,5 @@ export default vue
     .row
       .col-xs-12
         h3 Add Device
-        form-component(:model.sync='model', @action='create')
+        form-component(:model.sync='model', @action='save')
 </template>

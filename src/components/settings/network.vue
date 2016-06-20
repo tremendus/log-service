@@ -1,5 +1,5 @@
 <script>
-import { action, update } from 'restful-service'
+import { action, update } from '../../services/store'
 
 const vue = {
   name: 'SettingsNetwork',

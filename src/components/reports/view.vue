@@ -9,14 +9,16 @@
 // option to download as format
 // > option to export to credential
 
-import { readOne } from 'restful-service'
+import ModelMixin from '../../mixins/model'
 import { component as TabComponent, mixin as TabMixin } from '../../plugins/tabs'
 import ViewReport from './view-report'
 import ViewReadings from './view-readings'
 import ViewDevices from './view-devices'
 
-var vue = {
+const vue = {
   name: 'ReportsView',
+  resource: 'reports',
+  mixins: [ModelMixin, TabMixin],
   components: {
     TabComponent,
     ViewReport,
@@ -24,18 +26,19 @@ var vue = {
     ViewDevices,
     ViewReadings
   },
-  mixins: [TabMixin],
   data () {
     return {
-      report: {},
+      query: {
+        related: ['device_model.device_definition']
+      },
       deviceIndex: '',
       devices: [],
       tabs: [
-        { code: 'logs', label: 'Historical Data' },
-        { code: 'thresholds', label: 'Thresholds & Alarms' },
-        { code: 'configuration', label: 'Configuration' }
+        { code: 'settings', label: 'Settings' },
+        // { code: 'devices', label: 'Devices' },
+        { code: 'logs', label: 'Logs' }
       ],
-      selectedTab: 'logs'
+      selectedTab: 'settings'
     }
   },
   computed: {
@@ -43,13 +46,6 @@ var vue = {
       console.log('device()', typeof this.deviceIndex)
       if (typeof this.deviceIndex !== 'number') return {}
       return this.devices[this.deviceIndex]
-    }
-  },
-  route: {
-    data () {
-      return {
-        report: readOne('report', this.$route.params.reportId)
-      }
     }
   }
 }
@@ -59,13 +55,23 @@ export default vue
 
 <template lang="jade">
 #reports-view
-  //- view-report
-  //- debug(:debug='report')
-  div(v-if='!$loadingRouteData')
-    .form-group
-      label.control-label Select Device
-      view-devices(:list='report.meta.devices', :devices.sync='devices', :device-index.sync='deviceIndex')
-    div(v-if='device.id')
-      view-readings(:report='report', :device='device')
-  //- view-devices()
+  .container-fluid(v-if='!isRequesting')
+    .row
+      .col-sm-12
+        h4
+          {{ model.label }} &nbsp;
+          span.small {{ model.device_model.label }}
+
+    tab-component(:tabs='tabs', :selected-tab.sync='selectedTab', :tab-type='"pills"')
+
+    div(v-if='selectedTab === "settings"')
+      view-report(:report='model')
+
+  //-   //- tab - devices
+  //-   div(v-if='selectedTab === "logs"')
+  //-     .form-group
+  //-       label.control-label Select Device
+  //-       view-devices(:list='model.meta.devices', :devices.sync='devices', :device-index.sync='deviceIndex')
+  //-     view-readings(v-if='deviceIndex && device.id', :report='model', :device='device')
+  //- //- view-devices()
 </template>
