@@ -61,7 +61,7 @@ export default {
   #content-wrapper
     component(:is='uiHeader')
     router-view
-    component(:is='uiFooter')
+    //- component(:is='uiFooter')
 </template>
 
 <style lang="stylus">

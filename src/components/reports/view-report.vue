@@ -23,7 +23,7 @@ const vue = {
       const cs = this.report.meta.credentials
         .map(({ id }) => id)
       return cs
-    }
+    },
   }
 }
 
@@ -34,6 +34,14 @@ export default vue
 #reports-view-report
   .row
     .col-sm-12
+
+
+      //- note: this report shows time-param data for the selected device
+        device is dropdown
+        param = x
+        time = y
+        :: should re-use the same display component as the device view report page
+        - the only difference there is filter is for report, not device
 
       //- panel-element(title='Parameters')
       //-   p some content

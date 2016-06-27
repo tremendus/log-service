@@ -10,7 +10,7 @@ const template = `
 `
 
 const debug = Vue.extend({
-  props: ['debug', 'title', 'label'],
+  props: ['debug', 'label', 'classes'],
   // session: {
   session () {
     return {

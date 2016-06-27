@@ -18,9 +18,7 @@ const vue = {
   data () {
     return {
       query: {
-        device: {
-          related: ['device_model.device_definition']
-        }
+        related: ['device_model.device_definition']
       },
       tabs: [
         {
@@ -36,7 +34,7 @@ const vue = {
           label: 'Thresholds & Alarms'
         }
       ],
-      selectedTab: 'readings'
+      selectedTab: 'logs'
     }
   },
   computed: {
@@ -54,56 +52,9 @@ export default vue
 #devices-view
   .container-fluid
     .row
-      .col-xs-12(v-if='!isRequest')
+      .col-xs-12(v-if='!isRequest && model')
         h3 {{ model.label }}
-
-        .panel.panel-default
-          .panel-heading
-            h4.panel-title Device Configuration
-          .panel-body
-            .row
-              .col-xs-6
-                .form-group
-                  label.control-label Label
-                  p.static-form-control {{ model.label }}
-                .form-group
-                  label.control-label Device Type
-                  p.static-form-control {{ model.device_model.label }}
-                .form-group
-                  a.btn.btn-primary(v-link='{ name: "devices/edit", params: { deviceId: model.id } }') Edit
-              .col-xs-6
-                .form-group
-                  label.control-label Protocol
-                  p.static-form-control MODBUS {{ model.meta.protocols.modbus.use | uppercase }}
-                div(v-if='model.meta.protocols.use === "tcp"')
-                  .form-group
-                    label.control-label IP Address
-                    p.static-form-control {{ model.meta.protocols.modbus.tcp.ip }}
-                  .form-group
-                    label.control-label Port
-                    p.static-form-control {{ model.meta.protocols.modbus.tcp.port }}
-                div(v-if='model.meta.protocols.use === "rtu"')
-                  .form-group
-                    label.control-label Device
-                    p.static-form-control {{ model.meta.protocols.modbus.rtu.device }}
-                  .form-group
-                    label.control-label Port
-                    p.static-form-control {{ model.meta.protocols.modbus.rtu.port }}
-                  .form-group
-                    label.control-label Baud
-                    p.static-form-control {{ model.meta.protocols.modbus.rtu.baud }}
-                  .form-group
-                    label.control-label Data Bit
-                    p.static-form-control {{ model.meta.protocols.modbus.rtu.dataBit }}
-                  .form-group
-                    label.control-label Parity
-                    p.static-form-control {{ model.meta.protocols.modbus.rtu.parity }}
-                  .form-group
-                    label.control-label Stop Bit
-                    p.static-form-control {{ model.meta.protocols.modbus.rtu.stopBit }}
-
-        tab-component(:tabs='tabs', :selected-tab.sync='selectedTab', :tab-type='"pills"')
-
+        tab-component(:tabs='tabs', :selected-tab.sync='selectedTab', :tab-type='"pills"', keep-alive)
         component(:is='selectedComponent', :device='model')
 </template>
 

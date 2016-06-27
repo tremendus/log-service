@@ -13,9 +13,25 @@ const vue = {
         filters: [{
           method: 'whereNotIn',
           filter: ['status', ['ok']]
-        }]
+        }],
+        related: ['batch.report', 'device.device_model.device_definition']
       },
-      readings: []
+      readings: [],
+      tableReady: false
+    }
+  },
+  computed: {
+    rows () {
+      /* eslint-disable */
+      return this.readings.map((r) => {
+        let col = {
+          reading: r,
+          param: r.device.device_model.device_definition.meta.params.find((dp) => dp.id === r.parameter),
+          report_param: r.batch.report.meta.parameters.find((rp) => rp.id === r.parameter)
+        }
+        console.log('col', col)
+        return col
+      })
     }
   },
   created () {
@@ -24,8 +40,9 @@ const vue = {
   methods: {
     fetch () {
       readMany('readings', this.query)
-        .then((readings) => {
-          this.readings = readings
+        .then((data) => {
+          this.readings = data.collection
+          this.tableReady = true
         })
     }
   },
@@ -41,6 +58,26 @@ export default vue
 
 <template lang="jade">
 #device-thresholds
-  h4 device-thresholds
-  debug(:debug='readings')
+  h4 Thresholds &amp; Alarms
+  //- debug(:debug='rows')
+  .table-responsive(v-if='tableReady && readings.length')
+    table.table.table-bordered.table-striped
+      thead
+        tr
+          th Date/Time
+          th Param
+          th Condition
+          th Min
+          th Max
+          th Reading
+          th Alarm
+      tbody
+        tr(v-for='row in rows')
+          td {{ row.reading.created_at }}
+          td {{ row.param.label }}
+          td {{ row.reading.status }}
+          td {{ row.report_param.min }}
+          td {{ row.report_param.max }}
+          td {{ row.reading.value }}
+          td {{ row.report_param.alert ? 'Yes' : 'No' }}
 </template>
