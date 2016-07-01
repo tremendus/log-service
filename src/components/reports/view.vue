@@ -188,12 +188,6 @@ export default vue
   .container
     .row
       .col-xs-12(v-if='!isRequesting')
-        //- debug(:debug='selectedDevice')
-        //- debug(:debug='selectedPage')
-        //- debug(:debug='batches')
-        //- debug(:debug='batchList')
-        //- debug(:debug='readings')
-        debug(:debug='batchList')
         h4 {{ model.label }} &nbsp;
           span.small {{ model.device_model.label }}
 
