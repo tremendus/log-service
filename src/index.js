@@ -1,8 +1,27 @@
+const levels = [
+  'log',
+  'debug',
+  'info',
+  'warn',
+  'error'
+]
+
 const Log = function (options = {}) {
   this.silent = options.silent || false
   this.label = options.label || false
   this.console = true
   this.remote = true
+  this.nodeEnv = process.env.NODE_ENV || 'production'
+  this.minLevel = options.minLevel || (this.nodeEnv === 'production' ? 'warn' : 'log')
+  const levelIndex = levels.findIndex((l) => l === this.minLevel)
+  this.minLevelIndex = levelIndex === undefined ? 3 : levelIndex
+
+  levels
+    .forEach((level) => {
+      this[level] = function () {
+        this.output(level, arguments)
+      }.bind(this)
+    })
 }
 
 Log.prototype.output = function (level, args) {
@@ -11,49 +30,19 @@ Log.prototype.output = function (level, args) {
     args.unshift('[' + this.label + ']')
   }
 
-  if (!this.silent && this.console && console) {
+  const minLevel = levels.findIndex((l) => l === level)
+
+  const conditions = [
+    !this.silent,
+    minLevel >= this.minLevelIndex,
+    this.console,
+    console
+  ]
+
+  if (conditions.every((v) => v)) {
     var fn = console[level]
     fn.apply(console, args)
   }
 }
 
-Log.prototype.export = function () {
-  // todo: integrate remote logging
-  return
-}
-
-Log.prototype.log = function () {
-  this.output('log', arguments)
-}
-
-Log.prototype.error = function () {
-  this.output('error', arguments)
-}
-
-Log.prototype.warning = function () {
-  this.output('warning', arguments)
-}
-
-Log.prototype.info = function () {
-  this.output('info', arguments)
-}
-
-Log.prototype.debug = function () {
-  this.output('debug', arguments)
-}
-
-Log.prototype.group = function () {
-  this.output('group', arguments)
-}
-
-Log.prototype.groupEnd = function () {
-  this.output('groupEnd', arguments)
-}
-
-// custom methods
-Log.prototype.event = function (event, data) {
-  var color = 'green'
-  this.output('log', ['%c' + event, 'color: ' + color, data])
-}
-
-export default Log
+module.exports = Log
